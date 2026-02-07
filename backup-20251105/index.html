@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Pain Level Guide & Client Preparation - Poli International Professional Tools</title>
+    <meta name="description" content="Comprehensive tattoo and piercing pain guide with interactive body map, pain ratings, tolerance quiz, preparation checklist, and coping techniques. Reduce anxiety through education.">
+    <meta name="keywords" content="tattoo pain chart, piercing pain level, tattoo pain scale, most painful piercing, tattoo pain comparison, how to prepare for tattoo, pain tolerance quiz">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- HEADER (Required - SKILL.md) -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo (40px - SKILL.md standard) -->
+            <div class="logo">
+                <img src="../../assets/poli-logo.png" alt="Poli International" class="logo-img">
+                <span class="logo-text">Professional Tools</span>
+            </div>
+
+            <!-- Dark Mode Toggle (Required - SKILL.md) -->
+            <div class="header-controls">
+                <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                    <span class="toggle-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Tool Title Section -->
+            <div class="tool-header">
+                <h1 class="tool-title">Interactive Pain Level Guide & Client Preparation</h1>
+                <p class="tool-description">
+                    🎯 Understand pain levels for different tattoo and piercing locations, prepare mentally and physically,
+                    and reduce anxiety through education. Knowledge is confidence!
+                </p>
+
+                <!-- Embed Button (Required - SKILL.md) -->
+                <button id="embedBtn" class="embed-btn">
+                    📋 Embed on Your Site
+                </button>
+            </div>
+
+            <!-- Procedure Type Toggle -->
+            <div class="procedure-toggle">
+                <button id="tattooBtn" class="procedure-btn procedure-btn--active" data-type="tattoo">
+                    💉 Tattoo Pain Guide
+                </button>
+                <button id="piercingBtn" class="procedure-btn" data-type="piercing">
+                    💎 Piercing Pain Guide
+                </button>
+            </div>
+
+            <!-- Main Interface Grid -->
+            <div class="pain-guide-grid">
+
+                <!-- LEFT: Interactive Body Map -->
+                <div class="body-map-section">
+                    <h2 class="section-title">🗺️ Interactive Pain Map</h2>
+                    <p class="section-description">Click any location to see detailed pain information</p>
+
+                    <!-- View Toggle (Front/Back) -->
+                    <div class="view-toggle">
+                        <button id="frontViewBtn" class="view-btn view-btn--active" data-view="front">
+                            Front View
+                        </button>
+                        <button id="backViewBtn" class="view-btn" data-view="back">
+                            Back View
+                        </button>
+                    </div>
+
+                    <!-- Body Map Container -->
+                    <div id="bodyMapContainer" class="body-map-container">
+                        <!-- SVG body diagram will be injected here by JavaScript -->
+                        <div id="bodyMapSvg" class="body-map-svg">
+                            <!-- Placeholder for now - JS will create interactive SVG -->
+                            <p class="body-map-placeholder">Loading interactive body map...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pain Scale Legend -->
+                    <div class="pain-scale-legend">
+                        <h3>Pain Scale</h3>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #10B981;"></span>
+                                <span>1-3: Minimal</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #F59E0B;"></span>
+                                <span>4-6: Moderate</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #F97316;"></span>
+                                <span>7-8: High</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #EF4444;"></span>
+                                <span>9-10: Severe</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CENTER: Pain Info Display -->
+                <div class="pain-info-section">
+                    <!-- Quick Links -->
+                    <div class="quick-links">
+                        <button class="quick-link-btn" data-action="quiz">
+                            💪 Take Pain Tolerance Quiz
+                        </button>
+                        <button class="quick-link-btn" data-action="compare">
+                            ⚖️ Compare Locations
+                        </button>
+                        <button class="quick-link-btn" data-action="prepare">
+                            📋 Preparation Guide
+                        </button>
+                    </div>
+
+                    <!-- Pain Details Display (appears when location selected) -->
+                    <div id="painDetails" class="pain-details" style="display: none;">
+                        <div class="pain-details-header">
+                            <h2 id="locationName" class="location-name"></h2>
+                            <div id="painRating" class="pain-rating"></div>
+                        </div>
+
+                        <div class="pain-details-body">
+                            <div class="pain-detail-item">
+                                <h3>😌 Pain Category</h3>
+                                <p id="painCategory" class="pain-category"></p>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>❓ Why It Hurts</h3>
+                                <p id="whyHurts"></p>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>💭 What It Feels Like</h3>
+                                <p id="feelsLike"></p>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>⏱️ Duration</h3>
+                                <p id="duration"></p>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>📊 Factors Affecting Pain</h3>
+                                <ul id="factors" class="factors-list"></ul>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>✅ Best For</h3>
+                                <p id="bestFor"></p>
+                            </div>
+
+                            <div class="pain-detail-item">
+                                <h3>🩹 Healing Pain</h3>
+                                <p id="healingPain"></p>
+                            </div>
+
+                            <div id="warningSection" class="pain-detail-item pain-warning" style="display: none;">
+                                <h3>⚠️ Important Warning</h3>
+                                <p id="warningText"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Welcome Message (shown when no location selected) -->
+                    <div id="welcomeMessage" class="welcome-message">
+                        <div class="welcome-icon">🎯</div>
+                        <h2>Welcome to the Pain Guide</h2>
+                        <p>
+                            This guide helps you understand pain levels for different tattoo and piercing locations,
+                            so you can prepare mentally and physically for your procedure.
+                        </p>
+                        <h3>How to Use:</h3>
+                        <ul>
+                            <li>Click on the body map to explore pain levels</li>
+                            <li>Take the tolerance quiz to get personalized recommendations</li>
+                            <li>Compare different locations side-by-side</li>
+                            <li>Review preparation tips and coping techniques</li>
+                        </ul>
+                        <p class="welcome-note">
+                            <strong>Remember:</strong> Pain is subjective and varies significantly between individuals.
+                            Use this as a general guide and always consult with your tattoo artist or piercer.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PAIN TOLERANCE QUIZ SECTION -->
+            <section id="quizSection" class="quiz-section" style="display: none;">
+                <div class="section-header">
+                    <h2>💪 Pain Tolerance Quiz</h2>
+                    <button class="close-section-btn" data-section="quiz">✕</button>
+                </div>
+                <p class="section-intro">
+                    Answer these questions honestly to get your estimated pain tolerance level
+                    and personalized recommendations.
+                </p>
+
+                <form id="quizForm" class="quiz-form">
+                    <!-- Question 1 -->
+                    <div class="quiz-question">
+                        <h3>1. How do you handle getting blood drawn or shots?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="1" required>
+                                <span>I pass out or get very anxious</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="2">
+                                <span>It makes me nervous but I manage</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="3">
+                                <span>No big deal, barely notice it</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-question">
+                        <h3>2. How do you react to minor injuries (stubbed toe, paper cut)?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="1" required>
+                                <span>Very painful, takes a while to recover</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="2">
+                                <span>Hurts but I move on quickly</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="3">
+                                <span>Barely bothers me</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-question">
+                        <h3>3. Have you had tattoos or piercings before?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="1" required>
+                                <span>No, this will be my first</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="2">
+                                <span>Yes, small/simple ones</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="3">
+                                <span>Yes, multiple or painful locations</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-question">
+                        <h3>4. How do you handle dental work?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="1" required>
+                                <span>Very difficult, need sedation</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="2">
+                                <span>Uncomfortable but manage</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="3">
+                                <span>No problem at all</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-question">
+                        <h3>5. How anxious are you about pain?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="1" required>
+                                <span>Very anxious, thinking about it a lot</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="2">
+                                <span>Somewhat nervous but okay</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="3">
+                                <span>Not worried, ready for it</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-question">
+                        <h3>6. How do you handle sunburn or skin irritation?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="1" required>
+                                <span>Very sensitive, hurts a lot</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="2">
+                                <span>Annoying but tolerable</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="3">
+                                <span>Barely notice it</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-question">
+                        <h3>7. Can you sit still for long periods?</h3>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="1" required>
+                                <span>Very difficult, I fidget a lot</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="2">
+                                <span>I can manage 1-2 hours</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="3">
+                                <span>No problem, very patient</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="quiz-submit-btn">
+                        Calculate My Pain Tolerance
+                    </button>
+                </form>
+
+                <!-- Quiz Results -->
+                <div id="quizResults" class="quiz-results" style="display: none;">
+                    <div class="results-header">
+                        <h3>Your Pain Tolerance Level</h3>
+                        <p id="toleranceLevel" class="tolerance-level"></p>
+                    </div>
+                    <div class="results-body">
+                        <p id="toleranceDescription" class="tolerance-description"></p>
+                        <div class="recommendations">
+                            <h4>📋 Personalized Recommendations</h4>
+                            <ul id="recommendationsList" class="recommendations-list"></ul>
+                        </div>
+                        <div id="avoidLocations" class="avoid-locations" style="display: none;">
+                            <h4>⚠️ Locations to Approach with Caution</h4>
+                            <p id="avoidLocationsList"></p>
+                        </div>
+                    </div>
+                    <button class="retake-quiz-btn" onclick="document.getElementById('quizForm').reset(); document.getElementById('quizResults').style.display='none'; document.getElementById('quizForm').style.display='block';">
+                        Retake Quiz
+                    </button>
+                </div>
+            </section>
+
+            <!-- LOCATION COMPARISON SECTION -->
+            <section id="compareSection" class="compare-section" style="display: none;">
+                <div class="section-header">
+                    <h2>⚖️ Location Comparison</h2>
+                    <button class="close-section-btn" data-section="compare">✕</button>
+                </div>
+                <p class="section-intro">
+                    Compare pain levels between two locations side-by-side.
+                </p>
+
+                <div class="comparison-form">
+                    <div class="comparison-selectors">
+                        <div class="comparison-select-group">
+                            <label for="locationA">Location A</label>
+                            <select id="locationA" class="location-select">
+                                <option value="">Select location...</option>
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="comparison-vs">VS</div>
+                        <div class="comparison-select-group">
+                            <label for="locationB">Location B</label>
+                            <select id="locationB" class="location-select">
+                                <option value="">Select location...</option>
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <button id="compareBtn" class="compare-btn">Compare Locations</button>
+                </div>
+
+                <!-- Comparison Results -->
+                <div id="comparisonResults" class="comparison-results" style="display: none;">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- PREPARATION GUIDE SECTION -->
+            <section id="prepareSection" class="prepare-section" style="display: none;">
+                <div class="section-header">
+                    <h2>📋 Complete Preparation Guide</h2>
+                    <button class="close-section-btn" data-section="prepare">✕</button>
+                </div>
+
+                <div class="preparation-tabs">
+                    <button class="prep-tab prep-tab--active" data-tab="before">Before Appointment</button>
+                    <button class="prep-tab" data-tab="during">During Procedure</button>
+                    <button class="prep-tab" data-tab="after">After Procedure</button>
+                </div>
+
+                <!-- Before Appointment Tab -->
+                <div id="beforeTab" class="prep-tab-content prep-tab-content--active">
+                    <h3>24 Hours Before</h3>
+                    <div class="checklist">
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Get good sleep (7-9 hours) - Better pain tolerance when well-rested</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Stay hydrated - Skin takes ink/heals better when hydrated</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Avoid alcohol - Thins blood, increases bleeding and swelling</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Avoid aspirin/ibuprofen if possible - Blood thinners increase bleeding</span>
+                        </label>
+                    </div>
+
+                    <h3>Day Of Appointment</h3>
+                    <div class="checklist">
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Eat a full meal 2 hours before - Prevents passing out, stabilizes blood sugar</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Drink water - Stay hydrated throughout</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Wear comfortable, appropriate clothing - Easy access, won't rub fresh tattoo</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Bring snacks and water - Maintain energy during session</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Bring entertainment (headphones, book) - Distraction helps</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Arrive on time, relaxed - Rushing increases anxiety</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- During Procedure Tab -->
+                <div id="duringTab" class="prep-tab-content">
+                    <h3>🧘 Breathing Techniques</h3>
+                    <div class="technique-cards">
+                        <div class="technique-card">
+                            <h4>Box Breathing</h4>
+                            <p><strong>Method:</strong> Breathe in 4 counts, hold 4, out 4, hold 4</p>
+                            <p><strong>When:</strong> During painful moments</p>
+                            <p><strong>Benefit:</strong> Reduces pain perception, calms nerves</p>
+                        </div>
+                        <div class="technique-card">
+                            <h4>Deep Belly Breathing</h4>
+                            <p><strong>Method:</strong> Slow, deep breaths into belly</p>
+                            <p><strong>When:</strong> Throughout session</p>
+                            <p><strong>Benefit:</strong> Keeps you relaxed and oxygenated</p>
+                        </div>
+                        <div class="technique-card">
+                            <h4>Counted Breathing</h4>
+                            <p><strong>Method:</strong> Count your breaths, focus on numbers</p>
+                            <p><strong>When:</strong> When mind wanders to pain</p>
+                            <p><strong>Benefit:</strong> Distraction technique</p>
+                        </div>
+                    </div>
+
+                    <h3>🎯 Coping Strategies</h3>
+                    <ul class="coping-list">
+                        <li>Listen to music (curated playlist)</li>
+                        <li>Talk with artist (if they're open to it)</li>
+                        <li>Watch videos on phone</li>
+                        <li>Count or do math in head</li>
+                        <li>Visualize being somewhere else</li>
+                        <li>Squeeze stress ball</li>
+                        <li>Focus on breathing</li>
+                        <li>Take breaks when needed - don't be hero</li>
+                    </ul>
+
+                    <h3>💬 Communication Tips</h3>
+                    <ul class="communication-list">
+                        <li>Tell artist if you need break</li>
+                        <li>Communicate pain level honestly</li>
+                        <li>Ask questions if worried</li>
+                        <li>Don't try to tough it out if struggling</li>
+                        <li>Remember: it's okay to tap out</li>
+                    </ul>
+                </div>
+
+                <!-- After Procedure Tab -->
+                <div id="afterTab" class="prep-tab-content">
+                    <h3>Immediately After</h3>
+                    <div class="checklist">
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Eat something sweet - Restore blood sugar</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Drink water - Rehydrate</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Take it easy - Body just went through trauma</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Take OTC pain relief if needed - Manage soreness</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Avoid alcohol for 24 hours - Increases bleeding/swelling</span>
+                        </label>
+                    </div>
+
+                    <h3>First Week</h3>
+                    <div class="checklist">
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Expect soreness - Normal healing process</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Use pain relief as needed - Ibuprofen for inflammation</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Follow aftercare strictly - Reduces complications</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Avoid strenuous activity - Let body heal</span>
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox">
+                            <span>Sleep carefully - Don't sleep on fresh tattoo</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- IMPORTANT DISCLAIMERS -->
+            <section class="disclaimers-section">
+                <h2>⚠️ Important Disclaimers</h2>
+                <div class="disclaimer-cards">
+                    <div class="disclaimer-card">
+                        <p>
+                            <strong>Pain is subjective</strong> and varies significantly between individuals.
+                            These pain ratings are general guidelines based on common experiences. Your experience
+                            may differ based on your pain tolerance, anatomy, artist technique, and many other factors.
+                        </p>
+                    </div>
+                    <div class="disclaimer-card">
+                        <p>
+                            <strong>This guide is for educational purposes.</strong> It does not replace consultation
+                            with your tattoo artist or piercer. Always discuss concerns with your professional before
+                            your appointment.
+                        </p>
+                    </div>
+                    <div class="disclaimer-card">
+                        <p>
+                            <strong>Medical conditions:</strong> If you have medical conditions, take medications, or
+                            have concerns about pain management, consult your doctor before getting tattooed or pierced.
+                            Some conditions affect pain tolerance and healing.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MORE TOOLS NAVIGATION (Required - SKILL.md) -->
+    <section class="more-tools">
+        <div class="container">
+            <h2 class="section-title">More Professional Tools</h2>
+            <div class="tools-grid">
+                <a href="../gauge-converter/index.html" class="tool-card">
+                    <span class="tool-icon">📏</span>
+                    <h3>Gauge Converter</h3>
+                    <p>Convert between measurement systems</p>
+                </a>
+                <a href="../needle-selector/index.html" class="tool-card">
+                    <span class="tool-icon">💉</span>
+                    <h3>Needle Selector</h3>
+                    <p>Find the perfect needle</p>
+                </a>
+                <a href="../material-certification/index.html" class="tool-card">
+                    <span class="tool-icon">✓</span>
+                    <h3>Material Certification</h3>
+                    <p>Verify material safety</p>
+                </a>
+                <a href="../autoclave-calculator/index.html" class="tool-card">
+                    <span class="tool-icon">🔬</span>
+                    <h3>Autoclave Calculator</h3>
+                    <p>Sterilization cycle planning</p>
+                </a>
+                <a href="../coverage-calculator/index.html" class="tool-card">
+                    <span class="tool-icon">⏱️</span>
+                    <h3>Coverage Calculator</h3>
+                    <p>Estimate session time & pricing</p>
+                </a>
+                <a href="../jewelry-visualizer/index.html" class="tool-card">
+                    <span class="tool-icon">💎</span>
+                    <h3>Jewelry Visualizer</h3>
+                    <p>See jewelry sizes accurately</p>
+                </a>
+                <a href="../healing-tracker/index.html" class="tool-card">
+                    <span class="tool-icon">🩹</span>
+                    <h3>Healing Tracker</h3>
+                    <p>Track aftercare & healing</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- EMAIL CAPTURE - FOOTER (Required - SKILL.md Location 1) -->
+    <section class="email-capture-section">
+        <div class="container">
+            <div class="email-capture-card">
+                <h2 class="email-capture-title">🔔 Get Notified of New Tools!</h2>
+                <p class="email-capture-subtitle">Be first to know when we launch new free tools for piercing professionals.</p>
+
+                <form class="tool__email-form" id="footer-email-form" data-location="footer">
+                    <div class="tool__email-input-group">
+                        <input type="email" id="footer-email-input" class="tool__email-input"
+                               placeholder="Your email address" required />
+                        <button type="submit" class="tool__email-submit">Notify Me</button>
+                    </div>
+                    <div class="tool__email-trust-signals">
+                        <span>✅ Free tool updates only</span>
+                        <span>✅ No spam</span>
+                        <span>✅ Unsubscribe anytime</span>
+                    </div>
+                    <p class="tool__email-success" id="footer-email-success" style="display: none;">
+                        ✅ Thanks! We'll notify you when new tools launch!
+                    </p>
+                    <p class="tool__email-error" id="footer-email-error" style="display: none;">
+                        ❌ Please enter a valid email address.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (Required - SKILL.md) -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Logo in Footer -->
+                <div class="footer-logo">
+                    <img src="../../assets/poli-logo.png" alt="Poli International" class="logo-img">
+                </div>
+
+                <!-- Buy Me a Coffee (Required - SKILL.md Location 1: Footer) -->
+                <div class="footer-support">
+                    <a href="https://www.buymeacoffee.com/poliintl" target="_blank" class="coffee-btn">
+                        <span class="coffee-icon">☕</span>
+                        <span class="coffee-text">Buy Me a Coffee</span>
+                    </a>
+                </div>
+
+                <!-- Footer Links -->
+                <div class="footer-links">
+                    <a href="https://poliinternational.com">Poli International</a>
+                    <a href="https://poliinternational.com/about">About</a>
+                    <a href="https://poliinternational.com/contact">Contact</a>
+                </div>
+
+                <!-- Copyright -->
+                <div class="footer-copyright">
+                    <p>&copy; 2024 Poli International. Professional tools for tattoo and piercing professionals.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- EMBED MODAL (Required - SKILL.md) -->
+    <div id="embedModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>🎁 Use This Pain Guide FREE on Your Website!</h2>
+
+            <!-- Embed Code Section -->
+            <div class="embed-code-section">
+                <p>Copy this code to embed the tool on your website:</p>
+                <textarea id="embedCode" class="embed-code-textarea" readonly></textarea>
+                <button id="copyEmbedCode" class="copy-btn">📋 Copy Code</button>
+            </div>
+
+            <!-- Download & Traffic Buttons -->
+            <div class="modal-buttons">
+                <a href="pain-guide.zip" download class="modal-btn modal-btn--download">
+                    ⬇️ Download HTML File
+                </a>
+                <a href="https://poliinternational.com/tools" target="_blank" class="modal-btn modal-btn--tools">
+                    🔗 More Free Tools
+                </a>
+            </div>
+
+            <!-- Email Capture in Modal (Required - SKILL.md Location 2) -->
+            <div class="modal-email-capture">
+                <h3>🔔 Get Notified of New Tools!</h3>
+                <form class="tool__email-form" id="modal-email-form" data-location="modal">
+                    <div class="tool__email-input-group">
+                        <input type="email" id="modal-email-input" class="tool__email-input"
+                               placeholder="Your email address" required />
+                        <button type="submit" class="tool__email-submit">Subscribe</button>
+                    </div>
+                    <p class="tool__email-success" id="modal-email-success" style="display: none;">
+                        ✅ Thanks! We'll notify you when new tools launch!
+                    </p>
+                    <p class="tool__email-error" id="modal-email-error" style="display: none;">
+                        ❌ Please enter a valid email address.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Ko-fi Button in Modal (Required - SKILL.md Location 2) -->
+            <div class="modal-kofi">
+                <p>☕ Enjoying this free tool? Support more development!</p>
+                <a href='https://ko-fi.com/C0C81NEXBV' target='_blank' class="tool__kofi">
+                    <img src='https://storage.ko-fi.com/cdn/kofi6.png?v=6'
+                         border='0' alt='Buy Me a Coffee at ko-fi.com'
+                         class="tool__kofi-img" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/pain-database.js"></script>
+    <script src="js/body-map.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/comparison.js"></script>
+    <script src="js/pain-guide.js"></script>
+    <script src="js/common.js"></script>
+</body>
+</html>

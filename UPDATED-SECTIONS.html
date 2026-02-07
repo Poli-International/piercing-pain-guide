@@ -1,0 +1,181 @@
+<!-- ========================================
+     PAIN GUIDE - SKILL.MD COMPLIANT SECTIONS
+     Use these to update index.html
+     ======================================== -->
+
+<!-- ========== 1. REPLACE HEADER (Lines 12-28) ========== -->
+<!-- DELETE current header and replace with this: -->
+
+<header class="pain-guide__header">
+    <div class="pain-guide__header-content">
+        <!-- LEFT: Logo -->
+        <div class="pain-guide__logo-container">
+            <img src="images/Poli-International-Co.webp" 
+                 alt="Poli International Logo" 
+                 class="pain-guide__logo">
+        </div>
+
+        <!-- CENTER: Title Group -->
+        <div class="pain-guide__title-group">
+            <h1 class="pain-guide__header-title">Interactive Pain Level Guide & Client Preparation</h1>
+            <p class="pain-guide__header-subtitle">
+                Understand pain levels, prepare effectively, and reduce anxiety through education
+            </p>
+        </div>
+
+        <!-- RIGHT: Buttons -->
+        <div class="pain-guide__header-buttons">
+            <button id="embedBtn" class="pain-guide__embed-button">
+                <span class="embed-icon">⚡</span>
+                <span class="embed-text">Free Embed</span>
+            </button>
+            <button id="darkModeToggle" class="pain-guide__dark-mode-toggle">
+                <span class="dark-mode-icon">◐</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+
+<!-- ========== 2. WRAP MAIN CONTENT ========== -->
+<!-- ADD this div wrapper around line 30: -->
+<div class="pain-guide">
+    <main class="pain-guide__main">
+        <div class="pain-guide__container">
+            
+            <!-- ALL EXISTING TOOL CONTENT STAYS HERE -->
+            <!-- Do not modify: procedure toggle, body map, pain details, quiz, comparison, preparation -->
+            
+        </div>
+    </main>
+
+
+<!-- ========== 3. ADD COMMUNITY FEEDBACK SECTION ========== -->
+<!-- INSERT this BEFORE the closing </div> of pain-guide and BEFORE footer -->
+
+    <section class="community-feedback">
+        <div class="container">
+            <div class="feedback-card">
+                <div class="feedback-header">
+                    <h2 class="feedback-title">💬 Help Us Build Better Tools, Friend!</h2>
+                    <p class="feedback-subtitle">
+                        Hey there, fellow body art enthusiast! Whether you're a professional tattooist, piercer, or someone who loves body art as much as we do – we're all in this together.
+                        Our passion doesn't get much support out there, so let's stick together and build the best tools to help our community thrive!
+                    </p>
+                    <p class="feedback-callout">
+                        <strong>Your feedback matters!</strong> Found something useful? Got ideas for improvements? We're all ears!
+                        Help us make this tool even better for everyone in our body art family.
+                    </p>
+                </div>
+
+                <form class="feedback-form" id="feedbackForm">
+                    <div class="feedback-form-grid">
+                        <div class="form-group">
+                            <label for="userEmail" class="form-label">Your Email (so we can reply!)</label>
+                            <input type="email" id="userEmail" name="userEmail" class="form-input"
+                                   placeholder="your.email@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userRole" class="form-label">You are a...</label>
+                            <select id="userRole" name="userRole" class="form-select" required>
+                                <option value="">Choose one</option>
+                                <option value="tattoo_artist">Tattoo Artist</option>
+                                <option value="piercer">Professional Piercer</option>
+                                <option value="shop_owner">Shop Owner</option>
+                                <option value="apprentice">Apprentice</option>
+                                <option value="enthusiast">Body Art Enthusiast/Customer</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedbackText" class="form-label">Share Your Thoughts, Ideas, or Suggestions</label>
+                        <textarea id="feedbackText" name="feedbackText" class="form-textarea"
+                                  placeholder="What do you love? What could be better? Any features you'd like to see? We genuinely want to hear from you!"
+                                  rows="5" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="feedback-submit-btn">
+                            <span class="btn-icon">✉️</span>
+                            <span class="btn-text">Send Feedback</span>
+                        </button>
+                    </div>
+
+                    <!-- Success/Error Messages -->
+                    <div class="feedback-message feedback-message--success" id="feedbackSuccess" style="display: none;">
+                        <strong>🎉 Thank you, friend!</strong> Your feedback has been sent. We'll read it carefully and get back to you soon!
+                    </div>
+                    <div class="feedback-message feedback-message--error" id="feedbackError" style="display: none;">
+                        <strong>😔 Oops!</strong> Something went wrong. Please try again or email us directly at patrick@poli-international.com
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+<!-- ========== 4. ADD FOOTER ========== -->
+<!-- INSERT this AFTER feedback section, BEFORE closing </div> of pain-guide -->
+
+    <footer class="pain-guide__footer">
+        <!-- Logo Section -->
+        <div class="pain-guide__footer-logo-section">
+            <img src="images/Poli-International-Co.webp" 
+                 alt="Poli International" 
+                 class="pain-guide__footer-logo">
+        </div>
+
+        <!-- Support Section with Ko-fi -->
+        <div class="pain-guide__support-section">
+            <p class="pain-guide__support-text">
+                ☕ Enjoying this free tool? Support development of more professional tools!
+            </p>
+            <a href='https://ko-fi.com/C0C81NEXBV' target='_blank' class="pain-guide__kofi">
+                <img src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' 
+                     border='0' 
+                     alt='Buy Me a Coffee at ko-fi.com' 
+                     class="pain-guide__kofi-img" />
+            </a>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="pain-guide__footer-info">
+            <p class="pain-guide__copyright">
+                © 2025 Poli International - Professional Tattoo & Piercing Supplies
+            </p>
+            <p class="pain-guide__disclaimer">
+                ⚠️ Pain is subjective and varies between individuals. Always consult with professional artists and healthcare providers about your specific situation.
+            </p>
+        </div>
+    </footer>
+
+</div><!-- End .pain-guide wrapper -->
+
+
+<!-- ========== 5. UPDATE EMBED MODAL ========== -->
+<!-- REPLACE existing embed modal with this simpler version: -->
+
+<div id="embedModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <h2>Embed This Tool</h2>
+        <p>Copy this code to embed the Pain Level Guide on your website:</p>
+        <textarea id="embedCode" readonly></textarea>
+        <button id="copyEmbedCode" class="copy-btn">Copy Code</button>
+    </div>
+</div>
+
+
+<!-- ========== 6. UPDATE SCRIPTS SECTION ========== -->
+<!-- REPLACE existing <script> tags with this order: -->
+
+<script src="js/pain-database.js"></script>
+<script src="js/pain-guide.js"></script>
+<script src="js/body-map.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/comparison.js"></script>
+<script src="js/common.js"></script>      <!-- NEW -->
+<script src="js/feedback.js"></script>    <!-- NEW -->

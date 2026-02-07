@@ -1,0 +1,1754 @@
+/*
+═══════════════════════════════════════════════════════════════
+INTERACTIVE PAIN LEVEL GUIDE & CLIENT PREPARATION - STYLESHEET
+Poli International Professional Tools
+Version: 1.0
+Agent: 1B - CSS Styling Specialist
+
+Design: Supportive Medical Aesthetic
+Primary: Calm Blue (#3B82F6) - trust, medical
+Secondary: Comfort Purple (#8B5CF6) - supportive
+Pain Scale: Green → Yellow → Orange → Red gradient
+═══════════════════════════════════════════════════════════════
+*/
+
+/* ===================================================================
+   1. CSS CUSTOM PROPERTIES (REQUIRED - SKILL.md)
+   =================================================================== */
+
+:root {
+    /* Brand Colors (SKILL.md standard) */
+    --poli-primary: #0052CC;
+    --poli-secondary: #2C3E50;
+    --poli-accent: #00AA44;
+
+    /* Tool-Specific Colors */
+    --calm-blue: #3B82F6;
+    --comfort-purple: #8B5CF6;
+    --trust-teal: #14B8A6;
+
+    /* Pain Scale Gradient Colors */
+    --pain-minimal: #10B981;      /* Green - 1-3 */
+    --pain-moderate: #F59E0B;     /* Yellow - 4-6 */
+    --pain-high: #F97316;         /* Orange - 7-8 */
+    --pain-severe: #EF4444;       /* Red - 9-10 */
+
+    /* Light Mode (Default) */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --bg-tertiary: #F0F9FF;       /* Light blue tint */
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    --card-bg: #FFFFFF;
+    --shadow: rgba(0, 0, 0, 0.1);
+
+    /* Dark Mode - CRITICAL: Prevents white text on white (SKILL.md) */
+    --dark-bg-primary: #1F2937;
+    --dark-bg-secondary: #111827;
+    --dark-bg-tertiary: #1E3A5F;  /* Dark blue tint */
+    --dark-text-primary: #F9FAFB;
+    --dark-text-secondary: #D1D5DB;
+    --dark-border-color: #374151;
+    --dark-card-bg: #2D3748;
+    --dark-shadow: rgba(0, 0, 0, 0.3);
+
+    /* Component Sizes (SKILL.md standard) */
+    --logo-height: 40px;
+    --logo-small-height: 28px;
+    --header-height: 70px;
+    --footer-height: auto;
+    --button-height: 44px;
+    --coffee-btn-width: 160px;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Typography */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Dark Mode Active State - CRITICAL (SKILL.md) */
+body.dark-mode {
+    --bg-primary: var(--dark-bg-primary);
+    --bg-secondary: var(--dark-bg-secondary);
+    --bg-tertiary: var(--dark-bg-tertiary);
+    --text-primary: var(--dark-text-primary);
+    --text-secondary: var(--dark-text-secondary);
+    --border-color: var(--dark-border-color);
+    --card-bg: var(--dark-card-bg);
+    --shadow: var(--dark-shadow);
+}
+
+/* ===================================================================
+   2. BASE STYLES - CRITICAL FOR DARK MODE (SKILL.md)
+   =================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+    line-height: 1.6;
+}
+
+/* Ensure ALL text is visible in dark mode (SKILL.md) */
+h1, h2, h3, h4, h5, h6, p, span, div, label, input, textarea, select, li {
+    color: var(--text-primary);
+}
+
+/* ===================================================================
+   3. HEADER STYLING (SKILL.md Standard)
+   =================================================================== */
+
+.main-header {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+/* Logo (SKILL.md standard) */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo-img {
+    height: var(--logo-height);
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Dark Mode Toggle (SKILL.md) */
+.dark-mode-toggle {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    font-size: 20px;
+    transition: all var(--transition-normal);
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* ===================================================================
+   4. MAIN CONTENT AREA
+   =================================================================== */
+
+.main-content {
+    padding: var(--spacing-xl) 0;
+    min-height: 60vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* ===================================================================
+   5. TOOL HEADER
+   =================================================================== */
+
+.tool-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.tool-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.2;
+}
+
+.tool-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Embed Button (SKILL.md) */
+.embed-btn {
+    background: var(--poli-primary);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.embed-btn:hover {
+    background: #0041A8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* ===================================================================
+   6. PROCEDURE TYPE TOGGLE
+   =================================================================== */
+
+.procedure-toggle {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.procedure-btn {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.procedure-btn:hover {
+    border-color: var(--calm-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.procedure-btn--active {
+    background: linear-gradient(135deg, var(--calm-blue) 0%, var(--comfort-purple) 100%);
+    color: white;
+    border-color: var(--calm-blue);
+}
+
+/* ===================================================================
+   7. PAIN GUIDE GRID LAYOUT
+   =================================================================== */
+
+.pain-guide-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+}
+
+/* ===================================================================
+   8. BODY MAP SECTION
+   =================================================================== */
+
+.body-map-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.section-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.9rem;
+}
+
+/* View Toggle */
+.view-toggle {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.view-btn {
+    flex: 1;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.view-btn:hover {
+    border-color: var(--calm-blue);
+}
+
+.view-btn--active {
+    background: var(--calm-blue);
+    color: white;
+    border-color: var(--calm-blue);
+}
+
+/* Body Map Container */
+.body-map-container {
+    background: var(--bg-tertiary);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.body-map-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+}
+
+.body-map-placeholder {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Pain Scale Legend */
+.pain-scale-legend {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.pain-scale-legend h3 {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================================================
+   9. PAIN INFO SECTION
+   =================================================================== */
+
+.pain-info-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* Quick Links */
+.quick-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.quick-link-btn {
+    background: linear-gradient(135deg, var(--calm-blue) 0%, var(--comfort-purple) 100%);
+    color: white;
+    border: none;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.quick-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Welcome Message */
+.welcome-message {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.welcome-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.welcome-message h2 {
+    font-size: 1.75rem;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-md);
+}
+
+.welcome-message h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.welcome-message p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.welcome-message ul {
+    text-align: left;
+    max-width: 500px;
+    margin: 0 auto var(--spacing-lg) auto;
+    list-style-position: inside;
+}
+
+.welcome-message li {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.welcome-note {
+    background: var(--bg-tertiary);
+    border-left: 4px solid var(--calm-blue);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-lg);
+}
+
+/* Pain Details Display */
+.pain-details {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pain-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.location-name {
+    font-size: 1.75rem;
+    color: var(--calm-blue);
+}
+
+.pain-rating {
+    font-size: 2.5rem;
+    font-weight: 700;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+}
+
+.pain-rating[data-level="minimal"] {
+    color: var(--pain-minimal);
+}
+
+.pain-rating[data-level="moderate"] {
+    color: var(--pain-moderate);
+}
+
+.pain-rating[data-level="high"] {
+    color: var(--pain-high);
+}
+
+.pain-rating[data-level="severe"] {
+    color: var(--pain-severe);
+}
+
+.pain-details-body {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.pain-detail-item h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.pain-detail-item p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.pain-category {
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    display: inline-block;
+}
+
+.factors-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.factors-list li {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--calm-blue);
+}
+
+.pain-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--pain-severe);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.pain-warning h3 {
+    color: var(--pain-severe);
+}
+
+/* ===================================================================
+   10. QUIZ SECTION
+   =================================================================== */
+
+.quiz-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header h2 {
+    font-size: 1.75rem;
+    color: var(--calm-blue);
+}
+
+.close-section-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.close-section-btn:hover {
+    background: var(--pain-severe);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.section-intro {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Quiz Form */
+.quiz-form {
+    display: grid;
+    gap: var(--spacing-xl);
+}
+
+.quiz-question {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.quiz-question h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.quiz-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.quiz-option:hover {
+    border-color: var(--calm-blue);
+    background: var(--bg-tertiary);
+}
+
+.quiz-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.quiz-option span {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.quiz-submit-btn {
+    background: linear-gradient(135deg, var(--calm-blue) 0%, var(--comfort-purple) 100%);
+    color: white;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-top: var(--spacing-lg);
+}
+
+.quiz-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Quiz Results */
+.quiz-results {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--calm-blue);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.results-header h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.tolerance-level {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--calm-blue);
+}
+
+.tolerance-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+}
+
+.recommendations h4 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.recommendations-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.recommendations-list li {
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--pain-minimal);
+}
+
+.avoid-locations {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--pain-severe);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.avoid-locations h4 {
+    color: var(--pain-severe);
+    margin-bottom: var(--spacing-sm);
+}
+
+.retake-quiz-btn {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: var(--spacing-lg);
+    transition: all var(--transition-normal);
+}
+
+.retake-quiz-btn:hover {
+    border-color: var(--calm-blue);
+    background: var(--bg-tertiary);
+}
+
+/* ===================================================================
+   11. COMPARISON SECTION
+   =================================================================== */
+
+.compare-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.comparison-form {
+    margin-bottom: var(--spacing-xl);
+}
+
+.comparison-selectors {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--spacing-lg);
+    align-items: end;
+    margin-bottom: var(--spacing-lg);
+}
+
+.comparison-select-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.location-select {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.location-select:focus {
+    outline: none;
+    border-color: var(--calm-blue);
+}
+
+.comparison-vs {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--comfort-purple);
+    padding-bottom: var(--spacing-md);
+}
+
+.compare-btn {
+    background: linear-gradient(135deg, var(--calm-blue) 0%, var(--comfort-purple) 100%);
+    color: white;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all var(--transition-normal);
+}
+
+.compare-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.comparison-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+/* ===================================================================
+   12. PREPARATION SECTION
+   =================================================================== */
+
+.prepare-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.preparation-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.prep-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.prep-tab:hover {
+    color: var(--calm-blue);
+}
+
+.prep-tab--active {
+    color: var(--calm-blue);
+    border-bottom-color: var(--calm-blue);
+}
+
+.prep-tab-content {
+    display: none;
+}
+
+.prep-tab-content--active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.prep-tab-content h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.prep-tab-content h3:first-child {
+    margin-top: 0;
+}
+
+/* Checklist */
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.checklist-item {
+    display: flex;
+    align-items: start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.checklist-item:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--calm-blue);
+}
+
+.checklist-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.checklist-item span {
+    flex: 1;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* Technique Cards */
+.technique-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.technique-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.technique-card h4 {
+    font-size: 1.125rem;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-md);
+}
+
+.technique-card p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.technique-card strong {
+    color: var(--text-primary);
+}
+
+/* Lists */
+.coping-list,
+.communication-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.coping-list li,
+.communication-list li {
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--comfort-purple);
+}
+
+/* ===================================================================
+   13. DISCLAIMERS SECTION
+   =================================================================== */
+
+.disclaimers-section {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--calm-blue);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.disclaimers-section h2 {
+    font-size: 1.5rem;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.disclaimer-cards {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.disclaimer-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+}
+
+.disclaimer-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.disclaimer-card strong {
+    color: var(--text-primary);
+}
+
+/* ===================================================================
+   14. MORE TOOLS SECTION (SKILL.md Required)
+   =================================================================== */
+
+.more-tools {
+    padding: var(--spacing-xl) 0;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow);
+    border-color: var(--poli-primary);
+}
+
+.tool-icon {
+    font-size: 40px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.tool-card h3 {
+    margin: var(--spacing-sm) 0;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.tool-card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ===================================================================
+   15. EMAIL CAPTURE SECTION (SKILL.md Required - Location 1)
+   =================================================================== */
+
+.email-capture-section {
+    padding: var(--spacing-2xl) 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-top: 1px solid var(--border-color);
+}
+
+body.dark-mode .email-capture-section {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+}
+
+.email-capture-card {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.email-capture-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .email-capture-title {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.email-capture-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.tool__email-form {
+    margin-top: var(--spacing-lg);
+}
+
+.tool__email-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.tool__email-input {
+    flex: 1;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+}
+
+.tool__email-input:focus {
+    outline: none;
+    border-color: var(--calm-blue);
+}
+
+.tool__email-submit {
+    background: var(--calm-blue);
+    color: white;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+}
+
+.tool__email-submit:hover {
+    background: var(--comfort-purple);
+    transform: translateY(-2px);
+}
+
+.tool__email-trust-signals {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tool__email-success,
+.tool__email-error {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-md);
+}
+
+.tool__email-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--pain-minimal);
+    border: 1px solid var(--pain-minimal);
+}
+
+.tool__email-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--pain-severe);
+    border: 1px solid var(--pain-severe);
+}
+
+/* ===================================================================
+   16. FOOTER (SKILL.md Required)
+   =================================================================== */
+
+.main-footer {
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-xl) 0;
+    margin-top: var(--spacing-xl);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.footer-logo .logo-img {
+    height: var(--logo-height);
+    width: auto;
+}
+
+/* Buy Me a Coffee Button (SKILL.md - Location 1: Footer) */
+.coffee-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: #FFDD00;
+    color: #000000;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    width: var(--coffee-btn-width);
+    justify-content: center;
+    height: var(--button-height);
+    transition: all var(--transition-normal);
+    box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3);
+}
+
+.coffee-btn:hover {
+    background: #FFE84D;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255, 221, 0, 0.5);
+}
+
+.coffee-icon {
+    font-size: 20px;
+}
+
+.footer-links {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-normal);
+}
+
+.footer-links a:hover {
+    color: var(--poli-primary);
+}
+
+.footer-copyright {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* ===================================================================
+   17. EMBED MODAL (SKILL.md Required)
+   =================================================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--spacing-xl);
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: var(--pain-severe);
+    background: var(--bg-secondary);
+    transform: rotate(90deg);
+}
+
+.modal-content h2 {
+    font-size: 1.75rem;
+    color: var(--calm-blue);
+    margin-bottom: var(--spacing-lg);
+}
+
+.embed-code-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.embed-code-section p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.embed-code-textarea {
+    width: 100%;
+    height: 120px;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    resize: vertical;
+    margin-bottom: var(--spacing-md);
+}
+
+.copy-btn {
+    background: var(--calm-blue);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.copy-btn:hover {
+    background: var(--comfort-purple);
+    transform: translateY(-2px);
+}
+
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.modal-btn {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.modal-btn--download {
+    background: var(--comfort-purple);
+    color: white;
+}
+
+.modal-btn--download:hover {
+    background: #7C3AED;
+    transform: translateY(-2px);
+}
+
+.modal-btn--tools {
+    background: var(--calm-blue);
+    color: white;
+}
+
+.modal-btn--tools:hover {
+    background: #2563EB;
+    transform: translateY(-2px);
+}
+
+/* Email Capture in Modal (SKILL.md - Location 2) */
+.modal-email-capture {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 2px solid var(--calm-blue);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-email-capture h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+/* Ko-fi in Modal (SKILL.md - Location 2) */
+.modal-kofi {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 2px solid var(--comfort-purple);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.modal-kofi p {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.tool__kofi {
+    display: inline-block;
+    transition: all var(--transition-normal);
+}
+
+.tool__kofi:hover {
+    transform: scale(1.08) translateY(-3px);
+}
+
+.tool__kofi-img {
+    height: 50px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===================================================================
+   18. RESPONSIVE DESIGN
+   =================================================================== */
+
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 var(--spacing-md);
+    }
+
+    .logo-text {
+        display: none;
+    }
+
+    .tool-title {
+        font-size: 1.75rem;
+    }
+
+    .pain-guide-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-links {
+        grid-template-columns: 1fr;
+    }
+
+    .comparison-selectors {
+        grid-template-columns: 1fr;
+    }
+
+    .comparison-vs {
+        text-align: center;
+        padding: var(--spacing-sm) 0;
+    }
+
+    .comparison-results {
+        grid-template-columns: 1fr;
+    }
+
+    .technique-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .preparation-tabs {
+        flex-direction: column;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+
+    .tool__email-input-group {
+        flex-direction: column;
+    }
+
+    .tool__email-trust-signals {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .modal-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .tool-title {
+        font-size: 1.5rem;
+    }
+
+    .procedure-toggle {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: var(--spacing-lg);
+    }
+}
+
+/* ===================================================================
+   19. EMBED MODE STYLING (SKILL.md Required)
+   =================================================================== */
+
+body.embed-mode {
+    margin: 0;
+    padding: 0;
+}
+
+/* Embed Header */
+.embed-header {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.embed-header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.embed-logo {
+    height: var(--logo-small-height);
+    width: auto;
+}
+
+.embed-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.embed-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.embed-dark-toggle {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all var(--transition-normal);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.embed-dark-toggle:hover {
+    border-color: var(--calm-blue);
+    transform: scale(1.05);
+}
+
+/* Embed Main Content */
+.embed-main {
+    padding: var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Embed Footer */
+.embed-footer {
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.embed-footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.embed-footer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.embed-footer-btn--tools {
+    background: var(--calm-blue);
+    color: white;
+}
+
+.embed-footer-btn--tools:hover {
+    background: #2563EB;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.embed-footer-btn--support {
+    background: #FFDD00;
+    color: #000000;
+}
+
+.embed-footer-btn--support:hover {
+    background: #FFE84D;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 221, 0, 0.3);
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.embed-footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color var(--transition-normal);
+}
+
+.embed-footer-link:hover {
+    color: var(--calm-blue);
+    text-decoration: underline;
+}
+
+/* Mobile Responsive for Embed */
+@media (max-width: 768px) {
+    .embed-header-content {
+        flex-wrap: wrap;
+    }
+
+    .embed-logo {
+        height: 24px;
+    }
+
+    .embed-title {
+        font-size: 1rem;
+    }
+
+    .embed-footer-content {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .embed-footer-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .embed-title {
+        font-size: 0.9rem;
+        width: 100%;
+        order: -1;
+    }
+
+    .btn-text {
+        font-size: 0.85rem;
+    }
+}
