@@ -2,11 +2,11 @@
 
 > **Visualize and prepare for tattoo pain levels across different body areas.**
 
-[![License](https://img.shields.io/github/license/Poli-International/pain-guide)](LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/Poli-International/pain-guide)](https://github.com/Poli-International/pain-guide/commits/master)
-[![GitHub Stars](https://img.shields.io/github/stars/Poli-International/pain-guide?style=social)](https://github.com/Poli-International/pain-guide/stargazers)
+[![License](https://img.shields.io/github/license/Poli-International/piercing-pain-guide)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/Poli-International/piercing-pain-guide)](https://github.com/Poli-International/piercing-pain-guide/commits/master)
+[![GitHub Stars](https://img.shields.io/github/stars/Poli-International/piercing-pain-guide?style=social)](https://github.com/Poli-International/piercing-pain-guide/stargazers)
 
-**Live Demo:** [https://poliinternational.com/tools/pain-guide/](https://poliinternational.com/tools/pain-guide/)
+**Live Demo:** [https://poliinternational.com/tools/piercing-pain-guide/](https://poliinternational.com/tools/piercing-pain-guide/)
 
 ---
 
@@ -41,7 +41,7 @@ The Tattoo Pain Map & Guide is an interactive resource designed to help clients 
 
 ### Try It Live
 
-**👉 [Use the tool now](https://poliinternational.com/tools/pain-guide/)**
+**👉 [Use the tool now](https://poliinternational.com/tools/piercing-pain-guide/)**
 
 ---
 
@@ -50,7 +50,7 @@ The Tattoo Pain Map & Guide is an interactive resource designed to help clients 
 ### Option 1: Use Online (Recommended)
 
 No installation needed! Just visit:
-**[https://poliinternational.com/tools/pain-guide/](https://poliinternational.com/tools/pain-guide/)**
+**[https://poliinternational.com/tools/piercing-pain-guide/](https://poliinternational.com/tools/piercing-pain-guide/)**
 
 ---
 
@@ -71,7 +71,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Get Help
 
 - 📧 **Email**: <support@poliinternational.com>
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/Poli-International/pain-guide/issues)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/Poli-International/piercing-pain-guide/issues)
 
 ---
 
