@@ -82,7 +82,7 @@ function handleQuizSubmit(e) {
             alert('Please answer all questions');
             return;
         }
-        totalScore += parseInt(answer.value);
+        totalScore += InputGuards.safeFloat(answer.value, 0);
     }
 
     // Determine tolerance level
