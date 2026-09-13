@@ -250,6 +250,7 @@ function populateLocationSelectors() {
 // ═══════════════════════════════════════════════════════════════
 
 function getPainLevelColor(level) {
+    if (typeof level !== 'number' || isNaN(level) || level < 0) return '#10B981'; // Default green
     if (level <= 3) return '#10B981'; // Green
     if (level <= 6) return '#F59E0B'; // Yellow
     if (level <= 8) return '#F97316'; // Orange
@@ -257,6 +258,7 @@ function getPainLevelColor(level) {
 }
 
 function getPainCategory(level) {
+    if (typeof level !== 'number' || isNaN(level) || level < 0) return 'Minimal Pain';
     if (level <= 3) return 'Minimal Pain';
     if (level <= 6) return 'Moderate Pain';
     if (level <= 8) return 'High Pain';
