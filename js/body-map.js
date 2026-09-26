@@ -1,191 +1,263 @@
 // ═══════════════════════════════════════════════════════════════
-// BODY-MAP.JS - Interactive SVG Body Diagram
-// Clickable body regions that display pain information
+// BODY-MAP.JS - Interactive Inline SVG Body Diagram (V2)
+// Clean anatomical vector outlines with keyboard-accessible nodes.
+// Zero canvas, zero external bitmaps, zero hardcoded inline hex colors.
 // ═══════════════════════════════════════════════════════════════
 
-let currentView = 'front'; // 'front' or 'back'
+(function() {
+    let currentView = 'front'; // 'front' or 'back'
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeBodyMap();
-    initializeViewToggle();
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeViewToggle();
+        renderBodyMap(currentView);
 
-// ═══════════════════════════════════════════════════════════════
-// INITIALIZE BODY MAP
-// ═══════════════════════════════════════════════════════════════
-
-function initializeBodyMap() {
-    renderBodyMap('front');
-}
-
-// ═══════════════════════════════════════════════════════════════
-// VIEW TOGGLE (Front / Back)
-// ═══════════════════════════════════════════════════════════════
-
-function initializeViewToggle() {
-    const frontBtn = document.getElementById('frontViewBtn');
-    const backBtn = document.getElementById('backViewBtn');
-
-    frontBtn.addEventListener('click', function() {
-        switchView('front', frontBtn, backBtn);
-    });
-
-    backBtn.addEventListener('click', function() {
-        switchView('back', backBtn, frontBtn);
-    });
-}
-
-function switchView(view, activeBtn, inactiveBtn) {
-    if (currentView === view) return;
-
-    currentView = view;
-
-    // Update button states
-    activeBtn.classList.add('view-btn--active');
-    inactiveBtn.classList.remove('view-btn--active');
-
-    // Render new view
-    renderBodyMap(view);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// RENDER BODY MAP
-// ═══════════════════════════════════════════════════════════════
-
-function renderBodyMap(view) {
-    const container = document.getElementById('bodyMapSvg');
-
-    if (view === 'front') {
-        container.innerHTML = createFrontBodyMap();
-    } else {
-        container.innerHTML = createBackBodyMap();
-    }
-
-    // Add click handlers to all regions
-    attachClickHandlers();
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CREATE FRONT BODY MAP (Simplified SVG)
-// ═══════════════════════════════════════════════════════════════
-
-function createFrontBodyMap() {
-    // Simplified body diagram with clickable regions
-    // In production, use detailed SVG paths
-    return `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); padding: var(--spacing-md);">
-            ${createBodyRegion('outer_shoulder', 'Outer Shoulder', 'outer_shoulder')}
-            ${createBodyRegion('outer_upper_arm', 'Outer Upper Arm', 'outer_upper_arm')}
-            ${createBodyRegion('inner_upper_arm', 'Inner Upper Arm', 'inner_upper_arm')}
-            ${createBodyRegion('outer_forearm', 'Outer Forearm', 'outer_forearm')}
-            ${createBodyRegion('inner_forearm', 'Inner Forearm', 'inner_forearm')}
-            ${createBodyRegion('chest', 'Chest', 'chest')}
-            ${createBodyRegion('ribs', 'Ribs', 'ribs')}
-            ${createBodyRegion('stomach', 'Stomach', 'stomach')}
-            ${createBodyRegion('hands_fingers', 'Hands/Fingers', 'hands_fingers')}
-            ${createBodyRegion('outer_thigh', 'Outer Thigh', 'outer_thigh')}
-            ${createBodyRegion('knee', 'Knee', 'knee')}
-            ${createBodyRegion('outer_calf', 'Outer Calf', 'outer_calf')}
-            ${createBodyRegion('ankle', 'Ankle', 'ankle')}
-            ${createBodyRegion('feet_toes', 'Feet/Toes', 'feet_toes')}
-            ${createBodyRegion('neck_front', 'Front of Neck', 'neck_front')}
-        </div>
-    `;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CREATE BACK BODY MAP (Simplified SVG)
-// ═══════════════════════════════════════════════════════════════
-
-function createBackBodyMap() {
-    return `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); padding: var(--spacing-md);">
-            ${createBodyRegion('outer_shoulder', 'Outer Shoulder', 'outer_shoulder')}
-            ${createBodyRegion('upper_back', 'Upper Back', 'upper_back')}
-            ${createBodyRegion('spine', 'Spine', 'spine')}
-            ${createBodyRegion('lower_back', 'Lower Back', 'lower_back')}
-            ${createBodyRegion('outer_upper_arm', 'Outer Upper Arm', 'outer_upper_arm')}
-            ${createBodyRegion('inner_elbow', 'Inner Elbow', 'inner_elbow')}
-            ${createBodyRegion('outer_forearm', 'Outer Forearm', 'outer_forearm')}
-            ${createBodyRegion('outer_thigh', 'Outer Thigh', 'outer_thigh')}
-            ${createBodyRegion('knee', 'Knee', 'knee')}
-            ${createBodyRegion('outer_calf', 'Outer Calf', 'outer_calf')}
-        </div>
-    `;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CREATE BODY REGION BUTTON
-// ═══════════════════════════════════════════════════════════════
-
-function createBodyRegion(locationKey, label, dataKey) {
-    // Check if location exists in current database
-    const location = (typeof currentDatabase !== 'undefined' && currentDatabase[dataKey]) ||
-                     (typeof tattooPainLevels !== 'undefined' && tattooPainLevels[dataKey]);
-
-    if (!location) {
-        return ''; // Don't render if location doesn't exist
-    }
-
-    const color = location.color || '#999999';
-    const painLevel = location.pain_level || '?';
-
-    return `
-        <button class="body-region-btn"
-                data-location="${dataKey}"
-                style="
-                    background: linear-gradient(135deg, ${color}22 0%, ${color}44 100%);
-                    border: 2px solid ${color};
-                    border-radius: var(--radius-md);
-                    padding: var(--spacing-md);
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    text-align: left;
-                    color: var(--text-primary);
-                    font-weight: 600;
-                    position: relative;
-                "
-                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)';"
-                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.875rem;">${label}</span>
-                <span style="
-                    background: ${color};
-                    color: white;
-                    padding: 2px 8px;
-                    border-radius: 12px;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                ">${painLevel}/10</span>
-            </div>
-        </button>
-    `;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// ATTACH CLICK HANDLERS
-// ═══════════════════════════════════════════════════════════════
-
-function attachClickHandlers() {
-    const regions = document.querySelectorAll('.body-region-btn');
-    regions.forEach(region => {
-        region.addEventListener('click', function() {
-            const locationKey = this.getAttribute('data-location');
-            if (typeof window.displayPainInfo === 'function') {
-                window.displayPainInfo(locationKey);
-            }
+        window.addEventListener('languageChanged', function() {
+            renderBodyMap(currentView);
         });
     });
-}
 
-// ═══════════════════════════════════════════════════════════════
-// UPDATE BODY MAP (called when procedure type changes)
-// ═══════════════════════════════════════════════════════════════
+    function initializeViewToggle() {
+        const frontBtn = document.getElementById('frontViewBtn');
+        const backBtn = document.getElementById('backViewBtn');
+        if (!frontBtn || !backBtn) return;
 
-function updateBodyMap(procedureType) {
-    // Re-render current view with new procedure type
-    renderBodyMap(currentView);
-}
+        frontBtn.addEventListener('click', function() {
+            if (currentView === 'front') return;
+            currentView = 'front';
+            frontBtn.classList.add('view-btn--active');
+            backBtn.classList.remove('view-btn--active');
+            renderBodyMap('front');
+        });
 
-// Make available globally
-window.updateBodyMap = updateBodyMap;
+        backBtn.addEventListener('click', function() {
+            if (currentView === 'back') return;
+            currentView = 'back';
+            backBtn.classList.add('view-btn--active');
+            frontBtn.classList.remove('view-btn--active');
+            renderBodyMap('back');
+        });
+    }
+
+    function renderBodyMap(view) {
+        const container = document.getElementById('bodyMapSvg');
+        if (!container) return;
+
+        const isPiercing = (typeof window.currentProcedure === 'string') 
+            ? window.currentProcedure === 'piercing' 
+            : true;
+
+        if (isPiercing) {
+            container.innerHTML = generatePiercingSvg(view);
+        } else {
+            container.innerHTML = generateTattooSvg(view);
+        }
+
+        attachMarkerEvents(container);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PIERCING SVG GENERATION
+    // ═══════════════════════════════════════════════════════════════
+    function generatePiercingSvg(view) {
+        const t = window.t || (k => k);
+
+        // Piercing Markers configuration
+        const frontPiercingMarkers = [
+            { id: 'earlobe', x: 130, y: 145, label: t('piercing.earlobe.name'), pain: '2/10', class: 'minimal' },
+            { id: 'helix', x: 125, y: 88, label: t('piercing.helix.name'), pain: '4/10', class: 'moderate' },
+            { id: 'conch', x: 140, y: 115, label: t('piercing.conch.name'), pain: '6/10', class: 'moderate' },
+            { id: 'daith', x: 160, y: 120, label: t('piercing.daith.name'), pain: '6/10', class: 'moderate' },
+            { id: 'industrial', x: 110, y: 68, label: t('piercing.industrial.name'), pain: '7/10', class: 'high' },
+            { id: 'nostril', x: 235, y: 118, label: t('piercing.nostril.name'), pain: '4/10', class: 'moderate' },
+            { id: 'septum', x: 250, y: 132, label: t('piercing.septum.name'), pain: '3/10', class: 'minimal' },
+            { id: 'tongue', x: 250, y: 160, label: t('piercing.tongue.name'), pain: '5/10', class: 'moderate' },
+            { id: 'dermal_anchor', x: 310, y: 205, label: t('piercing.dermal_anchor.name'), pain: '5/10', class: 'moderate' },
+            { id: 'surface_barbell', x: 190, y: 205, label: t('piercing.surface_barbell.name'), pain: '6/10', class: 'moderate' },
+            { id: 'nipple', x: 215, y: 255, label: t('piercing.nipple.name'), pain: '8/10', class: 'high' },
+            { id: 'navel', x: 250, y: 345, label: t('piercing.navel.name'), pain: '6/10', class: 'moderate' },
+            { id: 'genital', x: 250, y: 415, label: t('piercing.genital.name'), pain: '9/10', class: 'severe' }
+        ];
+
+        const backPiercingMarkers = [
+            { id: 'surface_barbell', x: 250, y: 175, label: t('piercing.surface_barbell.name_nape'), pain: '6/10', class: 'moderate' },
+            { id: 'dermal_anchor', x: 290, y: 210, label: t('piercing.dermal_anchor.name_scapula'), pain: '5/10', class: 'moderate' },
+            { id: 'helix', x: 360, y: 100, label: t('piercing.helix.name_posterior'), pain: '4/10', class: 'moderate' },
+            { id: 'earlobe', x: 355, y: 155, label: t('piercing.earlobe.name'), pain: '2/10', class: 'minimal' }
+        ];
+
+        const markers = view === 'front' ? frontPiercingMarkers : backPiercingMarkers;
+
+        let markersHtml = '';
+        markers.forEach(m => {
+            const isSelected = (window.selectedLocation === m.id);
+            const selectedClass = isSelected ? 'map-marker--selected' : '';
+            markersHtml += `
+                <g class="map-marker map-marker--${m.class} ${selectedClass}" 
+                   data-location="${m.id}" 
+                   tabindex="0" 
+                   role="button" 
+                   aria-label="${m.label}, ${t('map.reported_discomfort', { pain: m.pain })}">
+                    <circle cx="${m.x}" cy="${m.y}" r="11" class="marker-pulse" />
+                    <circle cx="${m.x}" cy="${m.y}" r="7" class="marker-dot" />
+                    <rect x="${m.x + 12}" y="${m.y - 12}" width="125" height="24" rx="4" class="marker-label-bg" />
+                    <text x="${m.x + 18}" y="${m.y + 4}" class="marker-label-text">${m.label}</text>
+                    <text x="${m.x + 105}" y="${m.y + 4}" class="marker-badge-text">${m.pain}</text>
+                </g>
+            `;
+        });
+
+        return `
+            <svg viewBox="0 0 500 520" class="anatomical-svg" aria-label="${t('map.svg_aria_piercing')}" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="mapGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                <!-- Anatomical Torso & Head Silhouette -->
+                <g class="body-silhouette">
+                    ${view === 'front' ? `
+                        <!-- Head and Neck -->
+                        <path d="M 215 90 C 215 50, 285 50, 285 90 C 285 125, 275 160, 265 170 L 265 185 L 235 185 L 235 170 C 225 160, 215 125, 215 90 Z" class="body-part" />
+                        <!-- Ear Outline for Context -->
+                        <path d="M 215 85 C 200 80, 195 110, 205 130 C 210 140, 218 142, 222 135" class="body-contour" />
+                        <path d="M 285 85 C 300 80, 305 110, 295 130 C 290 140, 282 142, 278 135" class="body-contour" />
+                        <!-- Dedicated Enlarged Ear Inset (Left) for Clear Cartilage Pinning -->
+                        <g class="ear-inset-group" transform="translate(70, 30)">
+                            <rect x="0" y="0" width="110" height="150" rx="8" class="inset-frame" />
+                            <text x="10" y="20" class="inset-title">${t('map.ear_placements')}</text>
+                            <path d="M 45 40 C 75 25, 85 60, 75 95 C 68 115, 60 135, 45 130 C 35 125, 30 95, 42 75 C 50 60, 52 50, 45 40 Z" class="ear-contour" />
+                            <path d="M 52 55 C 65 50, 68 75, 60 88 C 55 95, 48 95, 48 85" class="ear-inner-contour" />
+                        </g>
+                        <!-- Shoulders and Torso -->
+                        <path d="M 235 185 C 190 190, 150 205, 125 240 L 115 340 L 140 340 L 150 260 L 175 260 L 175 390 L 195 440 L 305 440 L 325 390 L 325 260 L 350 260 L 360 340 L 385 340 L 375 240 C 350 205, 310 190, 265 185 Z" class="body-part" />
+                        <!-- Legs Upper -->
+                        <path d="M 195 440 L 185 505 L 235 505 L 245 450 L 255 450 L 265 505 L 315 505 L 305 440 Z" class="body-part" />
+                        <!-- Contours -->
+                        <line x1="205" y1="205" x2="245" y2="215" class="body-contour" />
+                        <line x1="295" y1="205" x2="255" y2="215" class="body-contour" />
+                        <circle cx="250" cy="345" r="4" class="body-contour" />
+                    ` : `
+                        <!-- Back Silhouette -->
+                        <path d="M 215 90 C 215 50, 285 50, 285 90 C 285 130, 275 165, 265 175 L 265 185 L 235 185 L 235 175 C 225 165, 215 130, 215 90 Z" class="body-part" />
+                        <path d="M 235 185 C 190 190, 150 205, 125 240 L 115 340 L 140 340 L 150 260 L 175 260 L 175 390 L 195 440 L 305 440 L 325 390 L 325 260 L 350 260 L 360 340 L 385 340 L 375 240 C 350 205, 310 190, 265 185 Z" class="body-part" />
+                        <!-- Spine and Scapula Contours -->
+                        <line x1="250" y1="185" x2="250" y2="430" class="body-contour body-contour--dashed" />
+                        <path d="M 210 220 C 230 225, 235 255, 220 270" class="body-contour" />
+                        <path d="M 290 220 C 270 225, 265 255, 280 270" class="body-contour" />
+                        <!-- Legs Upper Back -->
+                        <path d="M 195 440 L 185 505 L 235 505 L 245 450 L 255 450 L 265 505 L 315 505 L 305 440 Z" class="body-part" />
+                    `}
+                </g>
+
+                <!-- Interactive Marker Nodes -->
+                <g class="markers-layer">
+                    ${markersHtml}
+                </g>
+            </svg>
+        `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // TATTOO SVG GENERATION (Comparative Benchmark)
+    // ═══════════════════════════════════════════════════════════════
+    function generateTattooSvg(view) {
+        const t = window.t || (k => k);
+        const frontTattooMarkers = [
+            { id: 'outer_shoulder', x: 140, y: 205, label: t('tattoo.outer_shoulder.name'), pain: '2/10', class: 'minimal' },
+            { id: 'outer_upper_arm', x: 125, y: 245, label: t('tattoo.outer_upper_arm.name'), pain: '2/10', class: 'minimal' },
+            { id: 'outer_forearm', x: 110, y: 310, label: t('tattoo.outer_forearm.name'), pain: '2/10', class: 'minimal' },
+            { id: 'inner_forearm', x: 380, y: 310, label: t('tattoo.inner_forearm.name'), pain: '5/10', class: 'moderate' },
+            { id: 'chest', x: 250, y: 225, label: t('tattoo.chest.name'), pain: '6/10', class: 'moderate' },
+            { id: 'ribs', x: 195, y: 295, label: t('tattoo.ribs.name'), pain: '8/10', class: 'high' },
+            { id: 'outer_thigh', x: 205, y: 460, label: t('tattoo.outer_thigh.name'), pain: '3/10', class: 'minimal' },
+            { id: 'knee', x: 295, y: 495, label: t('tattoo.knee.name'), pain: '7/10', class: 'high' }
+        ];
+
+        const backTattooMarkers = [
+            { id: 'upper_back', x: 250, y: 235, label: t('tattoo.upper_back.name'), pain: '4/10', class: 'moderate' },
+            { id: 'spine', x: 250, y: 310, label: t('tattoo.spine.name'), pain: '9/10', class: 'severe' },
+            { id: 'outer_shoulder', x: 140, y: 205, label: t('tattoo.outer_shoulder.name'), pain: '2/10', class: 'minimal' },
+            { id: 'outer_calf', x: 295, y: 480, label: t('tattoo.outer_calf.name'), pain: '3/10', class: 'minimal' }
+        ];
+
+        const markers = view === 'front' ? frontTattooMarkers : backTattooMarkers;
+
+        let markersHtml = '';
+        markers.forEach(m => {
+            const isSelected = (window.selectedLocation === m.id);
+            const selectedClass = isSelected ? 'map-marker--selected' : '';
+            markersHtml += `
+                <g class="map-marker map-marker--${m.class} ${selectedClass}" 
+                   data-location="${m.id}" 
+                   tabindex="0" 
+                   role="button" 
+                   aria-label="${m.label}, ${t('map.reported_discomfort', { pain: m.pain })}">
+                    <circle cx="${m.x}" cy="${m.y}" r="11" class="marker-pulse" />
+                    <circle cx="${m.x}" cy="${m.y}" r="7" class="marker-dot" />
+                    <rect x="${m.x + 12}" y="${m.y - 12}" width="125" height="24" rx="4" class="marker-label-bg" />
+                    <text x="${m.x + 18}" y="${m.y + 4}" class="marker-label-text">${m.label}</text>
+                    <text x="${m.x + 105}" y="${m.y + 4}" class="marker-badge-text">${m.pain}</text>
+                </g>
+            `;
+        });
+
+        return `
+            <svg viewBox="0 0 500 520" class="anatomical-svg" aria-label="${t('map.svg_aria_tattoo')}" xmlns="http://www.w3.org/2000/svg">
+                <!-- Silhouette Base -->
+                <g class="body-silhouette">
+                    <path d="M 215 90 C 215 50, 285 50, 285 90 C 285 125, 275 160, 265 170 L 265 185 L 235 185 L 235 170 C 225 160, 215 125, 215 90 Z" class="body-part" />
+                    <path d="M 235 185 C 190 190, 150 205, 125 240 L 115 340 L 140 340 L 150 260 L 175 260 L 175 390 L 195 440 L 305 440 L 325 390 L 325 260 L 350 260 L 360 340 L 385 340 L 375 240 C 350 205, 310 190, 265 185 Z" class="body-part" />
+                    <path d="M 195 440 L 185 510 L 235 510 L 245 450 L 255 450 L 265 510 L 315 510 L 305 440 Z" class="body-part" />
+                </g>
+                <g class="markers-layer">
+                    ${markersHtml}
+                </g>
+            </svg>
+        `;
+    }
+
+    function attachMarkerEvents(container) {
+        const markers = container.querySelectorAll('.map-marker');
+        markers.forEach(marker => {
+            const locId = marker.getAttribute('data-location');
+            if (!locId) return;
+
+            const handleSelect = () => {
+                // Update active marker styling
+                markers.forEach(m => m.classList.remove('map-marker--selected'));
+                marker.classList.add('map-marker--selected');
+
+                if (typeof window.displayPainInfo === 'function') {
+                    window.displayPainInfo(locId);
+                }
+            };
+
+            marker.addEventListener('click', handleSelect);
+            marker.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelect();
+                }
+            });
+        });
+    }
+
+    window.updateBodyMap = function(procedureType) {
+        renderBodyMap(currentView);
+    };
+
+    window.refreshBodyMapSelection = function(selectedId) {
+        const container = document.getElementById('bodyMapSvg');
+        if (!container) return;
+        const markers = container.querySelectorAll('.map-marker');
+        markers.forEach(m => {
+            if (m.getAttribute('data-location') === selectedId) {
+                m.classList.add('map-marker--selected');
+            } else {
+                m.classList.remove('map-marker--selected');
+            }
+        });
+    };
+})();
