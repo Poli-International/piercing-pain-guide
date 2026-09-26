@@ -1,269 +1,337 @@
 // ═══════════════════════════════════════════════════════════════
-// PAIN GUIDE - Main Application Logic
-// Handles procedure switching, location display, section management
+// PAIN-GUIDE.JS - Main Application Logic & Section Orchestration (V2)
+// Seamless coordination between Body Map, Comparison, Quiz, and Prep Sheet.
 // ═══════════════════════════════════════════════════════════════
 
-let currentProcedure = 'tattoo'; // 'tattoo' or 'piercing'
-let currentDatabase = tattooPainLevels;
-let selectedLocation = null;
+(function() {
+    window.currentProcedure = 'piercing'; // Default primary focus
+    window.selectedLocation = 'earlobe';  // Initial inspection location
 
-// ═══════════════════════════════════════════════════════════════
-// INITIALIZATION
-// ═══════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeProcedureToggle();
+        initializeSectionControls();
+        initializeQuickLinks();
+        initializePreparationTabs();
+        initializePrintSheet();
+        populateLocationSelector();
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeProcedureToggle();
-    initializeQuickLinks();
-    initializeSectionControls();
-    initializePreparationTabs();
-    populateLocationSelectors();
-});
+        // Initial render of default location
+        window.displayPainInfo('earlobe');
 
-// ═══════════════════════════════════════════════════════════════
-// PROCEDURE TYPE TOGGLE (Tattoo / Piercing)
-// ═══════════════════════════════════════════════════════════════
-
-function initializeProcedureToggle() {
-    const tattooBtn = document.getElementById('tattooBtn');
-    const piercingBtn = document.getElementById('piercingBtn');
-
-    tattooBtn.addEventListener('click', function() {
-        switchProcedure('tattoo', tattooBtn, piercingBtn);
-    });
-
-    piercingBtn.addEventListener('click', function() {
-        switchProcedure('piercing', piercingBtn, tattooBtn);
-    });
-}
-
-function switchProcedure(type, activeBtn, inactiveBtn) {
-    if (currentProcedure === type) return; // Already active
-
-    currentProcedure = type;
-    currentDatabase = type === 'tattoo' ? tattooPainLevels : piercingPainLevels;
-
-    // Update button states
-    activeBtn.classList.add('procedure-btn--active');
-    inactiveBtn.classList.remove('procedure-btn--active');
-
-    // Reset display
-    selectedLocation = null;
-    document.getElementById('painDetails').style.display = 'none';
-    document.getElementById('welcomeMessage').style.display = 'block';
-
-    // Update body map (will be implemented in body-map.js)
-    if (typeof updateBodyMap === 'function') {
-        updateBodyMap(type);
-    }
-
-    // Repopulate location selectors
-    populateLocationSelectors();
-}
-
-// ═══════════════════════════════════════════════════════════════
-// LOCATION DISPLAY
-// ═══════════════════════════════════════════════════════════════
-
-function displayPainInfo(locationKey) {
-    const location = currentDatabase[locationKey];
-    if (!location) return;
-
-    selectedLocation = locationKey;
-
-    // Hide welcome message
-    document.getElementById('welcomeMessage').style.display = 'none';
-
-    // Show pain details
-    const painDetails = document.getElementById('painDetails');
-    painDetails.style.display = 'block';
-
-    // Populate details
-    document.getElementById('locationName').textContent = location.name;
-
-    const painRating = document.getElementById('painRating');
-    painRating.textContent = `${location.pain_level}/10`;
-
-    // Set color based on pain level
-    let level = 'minimal';
-    if (location.pain_level >= 9) level = 'severe';
-    else if (location.pain_level >= 7) level = 'high';
-    else if (location.pain_level >= 4) level = 'moderate';
-
-    painRating.setAttribute('data-level', level);
-    painRating.style.color = location.color;
-
-    document.getElementById('painCategory').textContent = location.category;
-    document.getElementById('painCategory').style.color = location.color;
-
-    document.getElementById('whyHurts').textContent = location.why_hurts;
-    document.getElementById('feelsLike').textContent = location.feels_like;
-    document.getElementById('duration').textContent = location.duration;
-    document.getElementById('bestFor').textContent = location.best_for;
-    document.getElementById('healingPain').textContent = location.healing_pain;
-
-    // Populate factors list
-    const factorsList = document.getElementById('factors');
-    factorsList.innerHTML = '';
-    location.factors.forEach(factor => {
-        const li = document.createElement('li');
-        li.textContent = factor;
-        factorsList.appendChild(li);
-    });
-
-    // Show warning if exists
-    const warningSection = document.getElementById('warningSection');
-    const warningText = document.getElementById('warningText');
-    if (location.warning) {
-        warningText.textContent = location.warning;
-        warningSection.style.display = 'block';
-    } else {
-        warningSection.style.display = 'none';
-    }
-
-    // Scroll to pain details
-    painDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// QUICK LINKS
-// ═══════════════════════════════════════════════════════════════
-
-function initializeQuickLinks() {
-    const quickLinks = document.querySelectorAll('.quick-link-btn');
-    quickLinks.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const action = this.getAttribute('data-action');
-            handleQuickLink(action);
-        });
-    });
-}
-
-function handleQuickLink(action) {
-    // Hide all sections first
-    document.getElementById('quizSection').style.display = 'none';
-    document.getElementById('compareSection').style.display = 'none';
-    document.getElementById('prepareSection').style.display = 'none';
-
-    // Show selected section
-    if (action === 'quiz') {
-        document.getElementById('quizSection').style.display = 'block';
-        document.getElementById('quizSection').scrollIntoView({ behavior: 'smooth' });
-    } else if (action === 'compare') {
-        document.getElementById('compareSection').style.display = 'block';
-        document.getElementById('compareSection').scrollIntoView({ behavior: 'smooth' });
-    } else if (action === 'prepare') {
-        document.getElementById('prepareSection').style.display = 'block';
-        document.getElementById('prepareSection').scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION CONTROLS (Close buttons)
-// ═══════════════════════════════════════════════════════════════
-
-function initializeSectionControls() {
-    const closeButtons = document.querySelectorAll('.close-section-btn');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const section = this.getAttribute('data-section');
-            if (section === 'quiz') {
-                document.getElementById('quizSection').style.display = 'none';
-            } else if (section === 'compare') {
-                document.getElementById('compareSection').style.display = 'none';
-            } else if (section === 'prepare') {
-                document.getElementById('prepareSection').style.display = 'none';
+        window.addEventListener('languageChanged', function() {
+            populateLocationSelector();
+            if (window.selectedLocation) {
+                window.displayPainInfo(window.selectedLocation);
             }
         });
     });
-}
 
-// ═══════════════════════════════════════════════════════════════
-// PREPARATION TABS
-// ═══════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
+    // PROCEDURE TOGGLE (Piercing vs Tattoo)
+    // ═══════════════════════════════════════════════════════════════
+    function initializeProcedureToggle() {
+        const piercingBtn = document.getElementById('piercingBtn');
+        const tattooBtn = document.getElementById('tattooBtn');
+        if (!piercingBtn || !tattooBtn) return;
 
-function initializePreparationTabs() {
-    const tabs = document.querySelectorAll('.prep-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-            switchPrepTab(tabName);
+        piercingBtn.addEventListener('click', function() {
+            switchProcedure('piercing', piercingBtn, tattooBtn);
         });
-    });
-}
 
-function switchPrepTab(tabName) {
-    // Remove active class from all tabs
-    document.querySelectorAll('.prep-tab').forEach(tab => {
-        tab.classList.remove('prep-tab--active');
-    });
-
-    // Remove active class from all tab contents
-    document.querySelectorAll('.prep-tab-content').forEach(content => {
-        content.classList.remove('prep-tab-content--active');
-    });
-
-    // Add active class to selected tab
-    const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
-    if (selectedTab) {
-        selectedTab.classList.add('prep-tab--active');
+        tattooBtn.addEventListener('click', function() {
+            switchProcedure('tattoo', tattooBtn, piercingBtn);
+        });
     }
 
-    // Show selected tab content
-    const tabContent = document.getElementById(`${tabName}Tab`);
-    if (tabContent) {
-        tabContent.classList.add('prep-tab-content--active');
+    function switchProcedure(type, activeBtn, inactiveBtn) {
+        if (window.currentProcedure === type) return;
+
+        window.currentProcedure = type;
+
+        activeBtn.classList.add('procedure-btn--active');
+        activeBtn.setAttribute('aria-pressed', 'true');
+        inactiveBtn.classList.remove('procedure-btn--active');
+        inactiveBtn.setAttribute('aria-pressed', 'false');
+
+        // Set default location for new procedure
+        window.selectedLocation = type === 'piercing' ? 'earlobe' : 'outer_shoulder';
+
+        if (typeof window.updateBodyMap === 'function') {
+            window.updateBodyMap(type);
+        }
+
+        populateLocationSelector();
+        if (typeof window.populateComparisonDropdowns === 'function') {
+            window.populateComparisonDropdowns();
+        }
+
+        window.displayPainInfo(window.selectedLocation);
     }
-}
 
-// ═══════════════════════════════════════════════════════════════
-// POPULATE LOCATION SELECTORS (for comparison tool)
-// ═══════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
+    // LOCATION SELECTOR POPULATION
+    // ═══════════════════════════════════════════════════════════════
+    function populateLocationSelector() {
+        const selector = document.getElementById('locationSelector');
+        if (!selector) return;
 
-function populateLocationSelectors() {
-    const locationA = document.getElementById('locationA');
-    const locationB = document.getElementById('locationB');
+        const db = window.getPainDatabase(window.currentProcedure);
+        const t = window.t || (k => k);
 
-    if (!locationA || !locationB) return;
+        let optionsHtml = `<option value="">-- ${t('map.select_location')} --</option>`;
+        for (const [id, loc] of Object.entries(db)) {
+            const locName = loc.nameKey ? t(loc.nameKey) : loc.name;
+            const isSel = (id === window.selectedLocation) ? 'selected' : '';
+            optionsHtml += `<option value="${id}" ${isSel}>${locName} (${loc.pain_level}/10)</option>`;
+        }
 
-    // Clear existing options
-    locationA.innerHTML = '<option value="">Select location...</option>';
-    locationB.innerHTML = '<option value="">Select location...</option>';
+        selector.innerHTML = optionsHtml;
+        selector.addEventListener('change', function(e) {
+            const locId = e.target.value;
+            if (locId) {
+                window.displayPainInfo(locId);
+            }
+        });
+    }
 
-    // Populate with current database
-    Object.keys(currentDatabase).forEach(key => {
-        const location = currentDatabase[key];
+    // ═══════════════════════════════════════════════════════════════
+    // DISPLAY LOCATION PAIN DETAILS
+    // ═══════════════════════════════════════════════════════════════
+    window.displayPainInfo = function(locationKey) {
+        const db = window.getPainDatabase(window.currentProcedure);
+        const location = db[locationKey];
+        if (!location) return;
 
-        const optionA = document.createElement('option');
-        optionA.value = key;
-        optionA.textContent = `${location.name} (${location.pain_level}/10)`;
-        locationA.appendChild(optionA);
+        window.selectedLocation = locationKey;
+        if (typeof window.refreshBodyMapSelection === 'function') {
+            window.refreshBodyMapSelection(locationKey);
+        }
 
-        const optionB = document.createElement('option');
-        optionB.value = key;
-        optionB.textContent = `${location.name} (${location.pain_level}/10)`;
-        locationB.appendChild(optionB);
-    });
-}
+        const detailsPanel = document.getElementById('painDetails');
+        const welcomePanel = document.getElementById('welcomeMessage');
+        if (welcomePanel) welcomePanel.style.display = 'none';
+        if (detailsPanel) detailsPanel.style.display = 'block';
 
-// ═══════════════════════════════════════════════════════════════
-// UTILITY FUNCTIONS
-// ═══════════════════════════════════════════════════════════════
+        const t = window.t || (k => k);
+        const locName = location.nameKey ? t(location.nameKey) : location.name;
+        const category = location.categoryKey ? t(location.categoryKey) : location.category;
+        const whyHurts = location.why_hurts_key ? t(location.why_hurts_key) : location.why_hurts;
+        const feelsLike = location.feels_like_key ? t(location.feels_like_key) : location.feels_like;
+        const duration = location.duration_key ? t(location.duration_key) : location.duration;
+        const healingPain = location.healing_pain_key ? t(location.healing_pain_key) : location.healing_pain;
+        const healingTime = location.healing_time_key ? t(location.healing_time_key) : location.healing_time;
 
-function getPainLevelColor(level) {
-    if (typeof level !== 'number' || isNaN(level) || level < 0) return '#10B981'; // Default green
-    if (level <= 3) return '#10B981'; // Green
-    if (level <= 6) return '#F59E0B'; // Yellow
-    if (level <= 8) return '#F97316'; // Orange
-    return '#EF4444'; // Red
-}
+        // Title and Score
+        const nameEl = document.getElementById('locationName');
+        const ratingEl = document.getElementById('painRating');
+        const categoryEl = document.getElementById('painCategory');
 
-function getPainCategory(level) {
-    if (typeof level !== 'number' || isNaN(level) || level < 0) return 'Minimal Pain';
-    if (level <= 3) return 'Minimal Pain';
-    if (level <= 6) return 'Moderate Pain';
-    if (level <= 8) return 'High Pain';
-    return 'Severe Pain';
-}
+        if (nameEl) nameEl.textContent = locName;
+        if (ratingEl) {
+            ratingEl.textContent = `${location.pain_level} / 10`;
+            ratingEl.className = `pain-rating-badge badge--${location.level_class}`;
+        }
+        if (categoryEl) {
+            categoryEl.textContent = category;
+            categoryEl.className = `pain-category-label category--${location.level_class}`;
+        }
 
-// Make displayPainInfo available globally for body-map.js
-window.displayPainInfo = displayPainInfo;
+        // Detailed Paragraphs
+        const whyEl = document.getElementById('whyHurts');
+        const feelsEl = document.getElementById('feelsLike');
+        const durationEl = document.getElementById('duration');
+        const healTimeEl = document.getElementById('healingTime');
+        const healPainEl = document.getElementById('healingPain');
+
+        if (whyEl) whyEl.textContent = whyHurts;
+        if (feelsEl) feelsEl.textContent = feelsLike;
+        if (durationEl) durationEl.textContent = duration;
+        if (healTimeEl) healTimeEl.textContent = healingTime;
+        if (healPainEl) healPainEl.textContent = healingPain;
+
+        // Factors List
+        const factorsContainer = document.getElementById('factorsList');
+        if (factorsContainer && location.factors) {
+            const factorsList = location.factor_keys 
+                ? location.factor_keys.map(k => `<li>${t(k)}</li>`)
+                : location.factors.map(f => `<li>${f}</li>`);
+            factorsContainer.innerHTML = factorsList.join('');
+        }
+
+        // Related Studio Guides (Ban 18: target="_top")
+        const linksContainer = document.getElementById('relatedGuideLinks');
+        if (linksContainer) {
+            if (location.related_tool) {
+                const toolLabel = location.related_tool.label_key 
+                    ? t(location.related_tool.label_key) 
+                    : location.related_tool.label;
+                linksContainer.innerHTML = `
+                    <div class="related-tool-chip">
+                        <span class="chip-label">${t('detail.related_tools')}:</span>
+                        <a href="${location.related_tool.url}" target="_top" rel="noopener" class="chip-link">
+                            ${toolLabel} ↗
+                        </a>
+                    </div>
+                `;
+            } else {
+                linksContainer.innerHTML = '';
+            }
+        }
+
+        // Sync dropdown value
+        const selector = document.getElementById('locationSelector');
+        if (selector && selector.value !== locationKey) {
+            selector.value = locationKey;
+        }
+
+        // Render Sensory Breakdown Visualizer (4 dimensions)
+        renderSensoryProfile(location);
+    };
+
+    function renderSensoryProfile(loc) {
+        const sensoryCard = document.getElementById('sensoryBreakdownCard');
+        if (!sensoryCard) return;
+
+        const sensory = loc.sensory || { sharpness: 3, pressure: 3, duration: 3, aftercare: 3 };
+
+        // Dimensions (values 1 to 10)
+        const dims = [
+            { key: 'sharpness', val: sensory.sharpness, labelKey: 'sensory.sharpness' },
+            { key: 'pressure', val: sensory.pressure, labelKey: 'sensory.pressure' },
+            { key: 'duration', val: sensory.duration, labelKey: 'sensory.duration' },
+            { key: 'aftercare', val: sensory.aftercare, labelKey: 'sensory.aftercare' }
+        ];
+
+        const container = document.getElementById('sensoryBarsContainer');
+        if (container) {
+            const html = dims.map(function(d) {
+                const pct = Math.min(100, Math.max(10, d.val * 10));
+                let colorClass = 'sensory-bar--low';
+                if (d.val >= 7) {
+                    colorClass = 'sensory-bar--high';
+                } else if (d.val >= 4) {
+                    colorClass = 'sensory-bar--mid';
+                }
+
+                return `
+                    <div class="sensory-item">
+                        <div class="sensory-item-header">
+                            <span class="sensory-item-title">${window.t(d.labelKey)}</span>
+                            <span class="sensory-item-rating">${d.val} / 10</span>
+                        </div>
+                        <div class="sensory-track" role="progressbar" aria-valuenow="${d.val}" aria-valuemin="1" aria-valuemax="10" aria-label="${window.t(d.labelKey)}">
+                            <svg class="sensory-bar-svg" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+                                <rect class="sensory-track-bg" x="0" y="0" width="100" height="12" rx="4" />
+                                <rect class="sensory-fill ${colorClass}" x="0" y="0" width="${pct}" height="12" rx="4" />
+                            </svg>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.innerHTML = html;
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SECTION VISIBILITY & NAVIGATION LINKS
+    // ═══════════════════════════════════════════════════════════════
+    function initializeQuickLinks() {
+        const links = document.querySelectorAll('[data-goto-section]');
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetSecId = this.getAttribute('data-goto-section');
+                openAndScrollToSection(targetSecId);
+            });
+        });
+    }
+
+    function openAndScrollToSection(secId) {
+        const section = document.getElementById(secId);
+        if (!section) return;
+
+        section.style.display = 'block';
+        section.hidden = false;
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function initializeSectionControls() {
+        const closeButtons = document.querySelectorAll('.close-section-btn');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const secId = this.getAttribute('data-section');
+                const section = document.getElementById(secId);
+                if (section) {
+                    section.style.display = 'none';
+                    section.hidden = true;
+                }
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PREPARATION TABS
+    // ═══════════════════════════════════════════════════════════════
+    function initializePreparationTabs() {
+        const tabs = document.querySelectorAll('.prep-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                tabs.forEach(t => t.classList.remove('prep-tab--active'));
+                this.classList.add('prep-tab--active');
+
+                document.querySelectorAll('.prep-tab-content').forEach(content => {
+                    content.classList.remove('prep-tab-content--active');
+                });
+
+                const activeContent = document.getElementById(`${targetTab}Tab`);
+                if (activeContent) {
+                    activeContent.classList.add('prep-tab-content--active');
+                }
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // STUDIO CONSULTATION PREP SHEET (Printable)
+    // ═══════════════════════════════════════════════════════════════
+    function initializePrintSheet() {
+        const printBtn = document.getElementById('printSheetBtn');
+        const clearBtn = document.getElementById('clearSheetBtn');
+        const printError = document.getElementById('printSheetError');
+
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                const placementInput = document.getElementById('prepPlacement');
+                if (!placementInput || !placementInput.value.trim()) {
+                    if (printError) {
+                        printError.textContent = window.t('printsheet.validation_error') || 'Please specify an intended piercing placement before printing.';
+                        printError.hidden = false;
+                        placementInput.focus();
+                    }
+                    return;
+                }
+
+                if (printError) printError.hidden = true;
+
+                // Call native browser print dialog
+                window.print();
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                const form = document.getElementById('printSheetForm');
+                if (form) form.reset();
+                if (printError) printError.hidden = true;
+            });
+        }
+
+        const printPocketCardBtn = document.getElementById('printPocketCardBtn');
+        if (printPocketCardBtn) {
+            printPocketCardBtn.addEventListener('click', function() {
+                window.print();
+            });
+        }
+    }
+})();
