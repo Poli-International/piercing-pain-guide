@@ -1,162 +1,198 @@
 // ═══════════════════════════════════════════════════════════════
-// COMPARISON.JS - Location Comparison Tool
-// Side-by-side pain level comparison
+// COMPARISON.JS - Side-by-Side Discomfort Comparison (V2)
+// Direct anatomical and sensation comparison without fake percentages.
 // ═══════════════════════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', function() {
-    const compareBtn = document.getElementById('compareBtn');
-    if (compareBtn) {
-        compareBtn.addEventListener('click', handleComparison);
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const compareBtn = document.getElementById('compareBtn');
+        if (compareBtn) {
+            compareBtn.addEventListener('click', handleComparison);
+        }
+
+        window.addEventListener('languageChanged', function() {
+            populateComparisonDropdowns();
+            const resultsContainer = document.getElementById('comparisonResults');
+            if (resultsContainer && resultsContainer.style.display !== 'none') {
+                handleComparison();
+            }
+        });
+    });
+
+    window.populateComparisonDropdowns = function() {
+        const selA = document.getElementById('locationA');
+        const selB = document.getElementById('locationB');
+        if (!selA || !selB) return;
+
+        const valA = selA.value;
+        const valB = selB.value;
+
+        const isPiercing = (typeof window.currentProcedure === 'string') 
+            ? window.currentProcedure === 'piercing' 
+            : true;
+        const db = window.getPainDatabase(isPiercing ? 'piercing' : 'tattoo');
+        const t = window.t || (k => k);
+
+        let optionsHtml = `<option value="">-- ${t('map.select_location')} --</option>`;
+        for (const [id, loc] of Object.entries(db)) {
+            const locName = loc.nameKey ? t(loc.nameKey) : loc.name;
+            optionsHtml += `<option value="${id}">${locName} (${loc.pain_level}/10)</option>`;
+        }
+
+        selA.innerHTML = optionsHtml;
+        selB.innerHTML = optionsHtml;
+
+        if (valA && db[valA]) selA.value = valA;
+        if (valB && db[valB]) selB.value = valB;
+    };
+
+    function handleComparison() {
+        const selA = document.getElementById('locationA');
+        const selB = document.getElementById('locationB');
+        const errorEl = document.getElementById('compareError');
+        const resultsContainer = document.getElementById('comparisonResults');
+        if (!selA || !selB || !resultsContainer) return;
+
+        const locKeyA = selA.value;
+        const locKeyB = selB.value;
+
+        if (!locKeyA || !locKeyB) {
+            if (errorEl) {
+                errorEl.textContent = window.t('compare.select_both_error') || 'Please select both locations to compare.';
+                errorEl.hidden = false;
+            }
+            resultsContainer.hidden = true;
+            return;
+        }
+
+        if (locKeyA === locKeyB) {
+            if (errorEl) {
+                errorEl.textContent = window.t('compare.select_different_error') || 'Please select two different locations.';
+                errorEl.hidden = false;
+            }
+            resultsContainer.hidden = true;
+            return;
+        }
+
+        if (errorEl) {
+            errorEl.hidden = true;
+        }
+
+        const isPiercing = (typeof window.currentProcedure === 'string') 
+            ? window.currentProcedure === 'piercing' 
+            : true;
+        const db = window.getPainDatabase(isPiercing ? 'piercing' : 'tattoo');
+
+        const dataA = db[locKeyA];
+        const dataB = db[locKeyB];
+        if (!dataA || !dataB) return;
+
+        renderComparisonCards(dataA, dataB, resultsContainer);
     }
-});
 
-// ═══════════════════════════════════════════════════════════════
-// HANDLE COMPARISON
-// ═══════════════════════════════════════════════════════════════
+    function renderComparisonCards(locA, locB, container) {
+        const t = window.t || (k => k);
+        const nameA = locA.nameKey ? t(locA.nameKey) : locA.name;
+        const nameB = locB.nameKey ? t(locB.nameKey) : locB.name;
+        const whyA = locA.why_hurts_key ? t(locA.why_hurts_key) : locA.why_hurts;
+        const whyB = locB.why_hurts_key ? t(locB.why_hurts_key) : locB.why_hurts;
+        const feelsA = locA.feels_like_key ? t(locA.feels_like_key) : locA.feels_like;
+        const feelsB = locB.feels_like_key ? t(locB.feels_like_key) : locB.feels_like;
+        const durA = locA.duration_key ? t(locA.duration_key) : locA.duration;
+        const durB = locB.duration_key ? t(locB.duration_key) : locB.duration;
+        const healA = locA.healing_time_key ? t(locA.healing_time_key) : locA.healing_time;
+        const healB = locB.healing_time_key ? t(locB.healing_time_key) : locB.healing_time;
 
-function handleComparison() {
-    const locationA = document.getElementById('locationA').value;
-    const locationB = document.getElementById('locationB').value;
-
-    if (!locationA || !locationB) {
-        alert('Please select both locations to compare');
-        return;
-    }
-
-    if (locationA === locationB) {
-        alert('Please select two different locations');
-        return;
-    }
-
-    // Get location data
-    const dataA = currentDatabase[locationA];
-    const dataB = currentDatabase[locationB];
-
-    // Display comparison
-    displayComparison(dataA, dataB);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// DISPLAY COMPARISON RESULTS
-// ═══════════════════════════════════════════════════════════════
-
-function displayComparison(locationA, locationB) {
-    const resultsContainer = document.getElementById('comparisonResults');
-    resultsContainer.style.display = 'grid';
-
-    // Determine which is more painful
-    const difference = Math.abs(locationA.pain_level - locationB.pain_level);
-    let comparisonText = '';
-
-    if (locationA.pain_level === locationB.pain_level) {
-        comparisonText = `<p style="text-align: center; grid-column: 1 / -1; padding: var(--spacing-lg); background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
-            <strong>Equal Pain Levels!</strong> Both locations have similar pain levels (${locationA.pain_level}/10).
-            Your experience may vary based on individual factors.
-        </p>`;
-    } else {
-        const more_painful = locationA.pain_level > locationB.pain_level ? locationA : locationB;
-        const less_painful = locationA.pain_level > locationB.pain_level ? locationB : locationA;
-
-        comparisonText = `<div style="grid-column: 1 / -1; padding: var(--spacing-lg); background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
-            <h3 style="color: var(--calm-blue); margin-bottom: var(--spacing-md);">Comparison Summary</h3>
-            <p><strong style="color: ${more_painful.color};">${more_painful.name}</strong> is more painful than <strong style="color: ${less_painful.color};">${less_painful.name}</strong></p>
-            <p style="margin-top: var(--spacing-sm);">Pain difference: <strong>${difference} points</strong> on the 1-10 scale</p>
-            <p style="margin-top: var(--spacing-sm); color: var(--text-secondary);">
-                ${difference <= 2 ? 'This is a relatively small difference - your experience may vary.' : ''}
-                ${difference >= 3 && difference <= 5 ? 'This is a noticeable difference in pain level.' : ''}
-                ${difference >= 6 ? 'This is a significant difference - prepare accordingly!' : ''}
-            </p>
-        </div>`;
-    }
-
-    resultsContainer.innerHTML = `
-        ${comparisonText}
-
-        <!-- Location A Card -->
-        <div style="background: var(--card-bg); border: 2px solid ${locationA.color}; border-radius: var(--radius-lg); padding: var(--spacing-lg);">
-            <h3 style="color: ${locationA.color}; margin-bottom: var(--spacing-md);">${locationA.name}</h3>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--border-color);">
-                <span style="font-weight: 600;">Pain Level:</span>
-                <span style="font-size: 1.5rem; font-weight: 700; color: ${locationA.color};">${locationA.pain_level}/10</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Category:</strong>
-                <span style="color: var(--text-secondary);">${locationA.category}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Feels Like:</strong>
-                <span style="color: var(--text-secondary);">${locationA.feels_like}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Duration:</strong>
-                <span style="color: var(--text-secondary);">${locationA.duration}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Session Tolerance:</strong>
-                <span style="color: var(--text-secondary);">${locationA.session_tolerance || 'Varies'}</span>
-            </div>
-
-            <div>
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Healing Pain:</strong>
-                <span style="color: var(--text-secondary);">${locationA.healing_pain}</span>
-            </div>
-
-            ${locationA.warning ? `
-                <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1); border: 1px solid var(--pain-severe); border-radius: var(--radius-md);">
-                    <strong style="color: var(--pain-severe);">⚠️ Warning:</strong>
-                    <p style="margin-top: var(--spacing-xs); color: var(--text-secondary);">${locationA.warning}</p>
+        let verdictHtml = '';
+        if (locA.pain_level === locB.pain_level) {
+            verdictHtml = `
+                <div class="compare-verdict compare-verdict--equal">
+                    <h4 class="compare-verdict-title">${t('compare.verdict_title')}</h4>
+                    <p class="compare-verdict-text">
+                        ${t('compare.verdict_equal', { score: locA.pain_level })}
+                    </p>
                 </div>
-            ` : ''}
-        </div>
+            `;
+        } else {
+            const isHigherA = locA.pain_level > locB.pain_level;
+            const higherName = isHigherA ? nameA : nameB;
+            const lowerName = isHigherA ? nameB : nameA;
+            const scoreHigh = isHigherA ? locA.pain_level : locB.pain_level;
+            const scoreLow = isHigherA ? locB.pain_level : locA.pain_level;
 
-        <!-- Location B Card -->
-        <div style="background: var(--card-bg); border: 2px solid ${locationB.color}; border-radius: var(--radius-lg); padding: var(--spacing-lg);">
-            <h3 style="color: ${locationB.color}; margin-bottom: var(--spacing-md);">${locationB.name}</h3>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--border-color);">
-                <span style="font-weight: 600;">Pain Level:</span>
-                <span style="font-size: 1.5rem; font-weight: 700; color: ${locationB.color};">${locationB.pain_level}/10</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Category:</strong>
-                <span style="color: var(--text-secondary);">${locationB.category}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Feels Like:</strong>
-                <span style="color: var(--text-secondary);">${locationB.feels_like}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Duration:</strong>
-                <span style="color: var(--text-secondary);">${locationB.duration}</span>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Session Tolerance:</strong>
-                <span style="color: var(--text-secondary);">${locationB.session_tolerance || 'Varies'}</span>
-            </div>
-
-            <div>
-                <strong style="display: block; margin-bottom: var(--spacing-xs);">Healing Pain:</strong>
-                <span style="color: var(--text-secondary);">${locationB.healing_pain}</span>
-            </div>
-
-            ${locationB.warning ? `
-                <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1); border: 1px solid var(--pain-severe); border-radius: var(--radius-md);">
-                    <strong style="color: var(--pain-severe);">⚠️ Warning:</strong>
-                    <p style="margin-top: var(--spacing-xs); color: var(--text-secondary);">${locationB.warning}</p>
+            verdictHtml = `
+                <div class="compare-verdict compare-verdict--diff">
+                    <h4 class="compare-verdict-title">${t('compare.verdict_title')}</h4>
+                    <p class="compare-verdict-text">
+                        ${t('compare.verdict_diff', { higher: higherName, lower: lowerName, scoreHigh, scoreLow })}
+                    </p>
                 </div>
-            ` : ''}
-        </div>
-    `;
+            `;
+        }
 
-    // Scroll to results
-    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+        container.innerHTML = `
+            ${verdictHtml}
+            <div class="compare-grid">
+                <!-- Card A -->
+                <div class="compare-card compare-card--${locA.level_class}">
+                    <div class="compare-card-header">
+                        <span class="compare-card-tag">${t('compare.select_a')}</span>
+                        <h3 class="compare-card-title">${nameA}</h3>
+                        <div class="compare-card-score badge--${locA.level_class}">
+                            ${locA.pain_level} / 10
+                        </div>
+                    </div>
+                    <div class="compare-card-body">
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.sensation')}</span>
+                            <p class="compare-metric-value">${feelsA}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.duration')}</span>
+                            <p class="compare-metric-value">${durA}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('detail.why_hurts')}</span>
+                            <p class="compare-metric-value">${whyA}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.healing')}</span>
+                            <p class="compare-metric-value">${healA}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card B -->
+                <div class="compare-card compare-card--${locB.level_class}">
+                    <div class="compare-card-header">
+                        <span class="compare-card-tag">${t('compare.select_b')}</span>
+                        <h3 class="compare-card-title">${nameB}</h3>
+                        <div class="compare-card-score badge--${locB.level_class}">
+                            ${locB.pain_level} / 10
+                        </div>
+                    </div>
+                    <div class="compare-card-body">
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.sensation')}</span>
+                            <p class="compare-metric-value">${feelsB}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.duration')}</span>
+                            <p class="compare-metric-value">${durB}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('detail.why_hurts')}</span>
+                            <p class="compare-metric-value">${whyB}</p>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-label">${t('compare.healing')}</span>
+                            <p class="compare-metric-value">${healB}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.hidden = false;
+    }
+})();
