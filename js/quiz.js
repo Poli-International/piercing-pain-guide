@@ -1,166 +1,177 @@
 // ═══════════════════════════════════════════════════════════════
-// QUIZ.JS - Pain Tolerance Quiz Logic
-// 7 questions, scoring system, personalized recommendations
+// QUIZ.JS - Procedural Pain Tolerance & Sensitivity Assessment (V2)
+// 7 questions, honest arithmetic, personalized studio preparation advice.
+// All inputs start completely empty. No fake statistics.
 // ═══════════════════════════════════════════════════════════════
 
-const quizScoring = {
-    low_tolerance: {
-        range: [7, 11],
-        level: 'Lower Pain Tolerance',
-        description: 'You may find tattooing/piercing more challenging than others. This is completely normal! Many people have lower pain tolerance, and there are strategies to help you have a positive experience.',
-        recommendations: [
-            'Start with less painful locations (outer forearm, outer shoulder, outer calf)',
-            'Plan shorter sessions (1-2 hours maximum initially)',
-            'Practice breathing techniques beforehand (box breathing, deep breathing)',
-            'Bring a support person to your appointment',
-            'Discuss numbing cream with your artist (some artists approve this)',
-            'Take breaks frequently - communicate openly with your artist',
-            'Stay well-fed and hydrated before your session',
-            'Choose a time when you\'re well-rested and calm'
-        ],
-        avoid_locations: ['Ribs', 'Spine', 'Elbow Ditch', 'Armpit', 'Feet', 'Hands', 'Nipples']
-    },
+(function() {
+    let lastAnswers = null;
 
-    medium_tolerance: {
-        range: [12, 16],
-        level: 'Average Pain Tolerance',
-        description: 'You have average pain tolerance. Most tattoo and piercing locations should be manageable for you with proper preparation. You\'ll handle moderate pain well.',
-        recommendations: [
-            'Most locations are manageable with proper preparation',
-            'Plan 2-3 hour sessions comfortably',
-            'Use breathing techniques during the session',
-            'Take breaks as needed - don\'t push yourself too hard',
-            'Stay well-fed and hydrated throughout',
-            'Approach very painful areas (ribs, spine) with extra preparation',
-            'Communicate with your artist about your comfort level',
-            'Build confidence with less painful spots first'
-        ],
-        caution_locations: ['Ribs', 'Spine', 'Elbow Ditch', 'Knee Ditch', 'Armpit', 'Nipples']
-    },
+    document.addEventListener('DOMContentLoaded', function() {
+        const quizForm = document.getElementById('quizForm');
+        const resetBtn = document.getElementById('resetQuizBtn');
 
-    high_tolerance: {
-        range: [17, 21],
-        level: 'Higher Pain Tolerance',
-        description: 'You have higher than average pain tolerance. You should handle tattooing and piercing well, including more challenging locations. However, even with high tolerance, some areas will still be very painful.',
-        recommendations: [
-            'Most locations will be manageable for you',
-            'Can handle longer sessions (3-4+ hours)',
-            'Even painful areas (ribs, spine) are likely tolerable',
-            'Still use breaks for artist and skin health',
-            'Breathing techniques help even with high tolerance',
-            'Stay hydrated and fed for best experience',
-            'Don\'t underestimate very painful locations',
-            'High tolerance doesn\'t mean no pain - be realistic'
-        ],
-        note: 'Even people with high tolerance find ribs, spine, and elbow ditch very challenging. Don\'t skip preparation!'
-    }
-};
-
-// ═══════════════════════════════════════════════════════════════
-// QUIZ INITIALIZATION
-// ═══════════════════════════════════════════════════════════════
-
-document.addEventListener('DOMContentLoaded', function() {
-    const quizForm = document.getElementById('quizForm');
-    if (quizForm) {
-        quizForm.addEventListener('submit', handleQuizSubmit);
-    }
-});
-
-// ═══════════════════════════════════════════════════════════════
-// QUIZ SUBMISSION & SCORING
-// ═══════════════════════════════════════════════════════════════
-
-function handleQuizSubmit(e) {
-    e.preventDefault();
-
-    // Calculate total score
-    let totalScore = 0;
-    for (let i = 1; i <= 7; i++) {
-        const answer = document.querySelector(`input[name="q${i}"]:checked`);
-        if (!answer) {
-            alert('Please answer all questions');
-            return;
+        if (quizForm) {
+            quizForm.addEventListener('submit', handleQuizSubmit);
         }
-        totalScore += InputGuards.safeFloat(answer.value, 0);
-    }
 
-    // Determine tolerance level
-    let toleranceData;
-    if (totalScore >= quizScoring.high_tolerance.range[0]) {
-        toleranceData = quizScoring.high_tolerance;
-    } else if (totalScore >= quizScoring.medium_tolerance.range[0]) {
-        toleranceData = quizScoring.medium_tolerance;
-    } else {
-        toleranceData = quizScoring.low_tolerance;
-    }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetQuiz);
+        }
 
-    // Display results
-    displayQuizResults(toleranceData, totalScore);
-
-    // Hide form, show results
-    document.getElementById('quizForm').style.display = 'none';
-    document.getElementById('quizResults').style.display = 'block';
-
-    // Scroll to results
-    document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    // Save to localStorage
-    localStorage.setItem('painToleranceScore', totalScore);
-    localStorage.setItem('painToleranceLevel', toleranceData.level);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// DISPLAY QUIZ RESULTS
-// ═══════════════════════════════════════════════════════════════
-
-function displayQuizResults(toleranceData, score) {
-    // Tolerance level
-    document.getElementById('toleranceLevel').textContent = toleranceData.level;
-
-    // Description
-    document.getElementById('toleranceDescription').textContent = toleranceData.description;
-
-    // Recommendations
-    const recommendationsList = document.getElementById('recommendationsList');
-    recommendationsList.innerHTML = '';
-    toleranceData.recommendations.forEach(rec => {
-        const li = document.createElement('li');
-        li.textContent = rec;
-        recommendationsList.appendChild(li);
+        window.addEventListener('languageChanged', function() {
+            if (lastAnswers) {
+                renderQuizResults(lastAnswers);
+            }
+        });
     });
 
-    // Avoid locations (only for low tolerance)
-    const avoidSection = document.getElementById('avoidLocations');
-    if (toleranceData.avoid_locations) {
-        const avoidList = document.getElementById('avoidLocationsList');
-        avoidList.textContent = toleranceData.avoid_locations.join(', ');
-        avoidSection.style.display = 'block';
-    } else {
-        avoidSection.style.display = 'none';
+    function handleQuizSubmit(e) {
+        e.preventDefault();
+
+        const errorEl = document.getElementById('quizValidationError');
+        const resultContainer = document.getElementById('quizResults');
+        if (errorEl) errorEl.hidden = true;
+
+        const answers = {};
+        const missing = [];
+
+        for (let i = 1; i <= 7; i++) {
+            const checked = document.querySelector(`input[name="q${i}"]:checked`);
+            if (!checked) {
+                missing.push(i);
+            } else {
+                answers[`q${i}`] = parseInt(checked.value, 10);
+            }
+        }
+
+        if (missing.length > 0) {
+            if (errorEl) {
+                const t = window.t || (k => k);
+                errorEl.textContent = t('quiz.validation_missing', { questions: missing.join(', ') }) 
+                    || `Please answer question(s) ${missing.join(', ')} before calculating your score.`;
+                errorEl.hidden = false;
+                errorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+
+        lastAnswers = answers;
+        renderQuizResults(answers);
     }
 
-    // Show note if high tolerance
-    if (toleranceData.note) {
-        const noteElement = document.createElement('p');
-        noteElement.style.marginTop = 'var(--spacing-lg)';
-        noteElement.style.fontStyle = 'italic';
-        noteElement.style.color = 'var(--text-secondary)';
-        noteElement.innerHTML = `<strong>Note:</strong> ${toleranceData.note}`;
-        document.getElementById('quizResults').querySelector('.results-body').appendChild(noteElement);
+    function renderQuizResults(answers) {
+        const t = window.t || (k => k);
+        const resultContainer = document.getElementById('quizResults');
+        if (!resultContainer) return;
+
+        // Calculate exact arithmetic
+        const q1 = answers.q1 || 0;
+        const q2 = answers.q2 || 0;
+        const q3 = answers.q3 || 0;
+        const q4 = answers.q4 || 0;
+        const q5 = answers.q5 || 0;
+        const q6 = answers.q6 || 0;
+        const q7 = answers.q7 || 0;
+        const total = q1 + q2 + q3 + q4 + q5 + q6 + q7;
+
+        let tierTitle = '';
+        let tierAdvice = '';
+        let tierClass = '';
+
+        if (total <= 11) {
+            tierTitle = t('quiz.low_tier');
+            tierAdvice = t('quiz.low_advice');
+            tierClass = 'quiz-result--low';
+        } else if (total <= 16) {
+            tierTitle = t('quiz.med_tier');
+            tierAdvice = t('quiz.med_advice');
+            tierClass = 'quiz-result--med';
+        } else {
+            tierTitle = t('quiz.high_tier');
+            tierAdvice = t('quiz.high_advice');
+            tierClass = 'quiz-result--high';
+        }
+
+        resultContainer.innerHTML = `
+            <div class="quiz-result-card ${tierClass}">
+                <div class="quiz-result-header">
+                    <span class="quiz-score-badge">${t('quiz.result_score', { score: total })}</span>
+                    <h3 class="quiz-result-title">${tierTitle}</h3>
+                </div>
+                <div class="quiz-arithmetic-box">
+                    <strong>${t('quiz.arithmetic_explanation')}</strong>
+                    <p class="quiz-arithmetic-formula">
+                        Q1(${q1}) + Q2(${q2}) + Q3(${q3}) + Q4(${q4}) + Q5(${q5}) + Q6(${q6}) + Q7(${q7}) = <strong>${total} / 21</strong>
+                    </p>
+                </div>
+                <div class="quiz-result-body">
+                    <p class="quiz-advice-text">${tierAdvice}</p>
+                </div>
+                <div class="quiz-result-actions">
+                    <button type="button" id="copyToPrepSheetBtn" class="btn-action">
+                        ${t('quiz.transfer_btn')}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        resultContainer.hidden = false;
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const transferBtn = document.getElementById('copyToPrepSheetBtn');
+        if (transferBtn) {
+            transferBtn.addEventListener('click', function() {
+                transferToPrepSheet(total, tierTitle);
+            });
+        }
     }
-}
 
-// ═══════════════════════════════════════════════════════════════
-// GET SAVED TOLERANCE (for other features to use)
-// ═══════════════════════════════════════════════════════════════
+    function transferToPrepSheet(score, tierTitle) {
+        const t = window.t || (k => k);
+        // Open the prep sheet section if closed
+        const prepSheetSection = document.getElementById('printSheetSection');
+        if (prepSheetSection && prepSheetSection.style.display === 'none') {
+            prepSheetSection.style.display = 'block';
+        }
 
-function getSavedTolerance() {
-    return {
-        score: localStorage.getItem('painToleranceScore'),
-        level: localStorage.getItem('painToleranceLevel')
-    };
-}
+        // Fill user sensitivity note
+        const sensitivityField = document.getElementById('prepSensitivity');
+        if (sensitivityField) {
+            if (score <= 11) {
+                sensitivityField.value = 'high_anxiety';
+            } else if (score <= 16) {
+                sensitivityField.value = 'moderate_anxiety';
+            } else {
+                sensitivityField.value = 'low_anxiety';
+            }
+        }
 
-// Make available globally
-window.getSavedTolerance = getSavedTolerance;
+        const notesField = document.getElementById('prepNotes');
+        if (notesField) {
+            const currentNotes = notesField.value.trim();
+            const quizNote = t('quiz.prep_sheet_note', { score, tier: tierTitle });
+            if (!currentNotes.includes('Tolerance Assessment Score') && !currentNotes.includes(quizNote)) {
+                notesField.value = currentNotes ? `${currentNotes}\n${quizNote}` : quizNote;
+            }
+        }
+
+        if (prepSheetSection) {
+            prepSheetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function resetQuiz() {
+        const quizForm = document.getElementById('quizForm');
+        const resultContainer = document.getElementById('quizResults');
+        const errorEl = document.getElementById('quizValidationError');
+
+        if (quizForm) quizForm.reset();
+        if (resultContainer) {
+            resultContainer.innerHTML = '';
+            resultContainer.hidden = true;
+        }
+        if (errorEl) errorEl.hidden = true;
+        lastAnswers = null;
+    }
+})();
