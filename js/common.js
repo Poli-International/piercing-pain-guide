@@ -22,11 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon.textContent = '◐';
             }
         }
-        if (save) localStorage.setItem('theme', theme);
+        if (save) { try { localStorage.setItem('theme', theme); } catch (e) {} }
     }
 
     // Init theme
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    let savedTheme = 'dark';
+    try { savedTheme = localStorage.getItem('theme') || 'dark'; } catch (e) {}
     setTheme(savedTheme, false);
 
     if (themeToggle) {
@@ -71,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('embedCode');
 
     if (textarea) {
-        const cleanUrl = window.location.href.split('?')[0].split('#')[0];
-        textarea.value = `<iframe src="${cleanUrl}" width="100%" height="800" frameborder="0" style="border:1px solid #333; border-radius:12px;"></iframe>`;
+        const embedUrl = 'https://poliinternational.com/tools/piercing-pain-guide/index.html';
+        textarea.value = `<iframe src="${embedUrl}" width="100%" height="800" frameborder="0" style="border:none; border-radius:12px;"></iframe>`;
     }
 
     if (embedBtn && modal) {
@@ -101,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
             textarea.select();
             navigator.clipboard.writeText(textarea.value).then(() => {
                 const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.innerHTML = (typeof window.t === 'function') ? window.t('btn.copied') : '✅ Copied!';
                 setTimeout(() => copyBtn.innerHTML = originalText, 2000);
             });
         });
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const btn = form.querySelector('button');
             const originalText = btn.textContent;
             
-            btn.textContent = '✅ Subscribed!';
+            btn.textContent = (typeof window.t === 'function') ? window.t('btn.subscribed') : '✅ Subscribed!';
             btn.disabled = true;
             input.value = '';
             
