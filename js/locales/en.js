@@ -7,7 +7,7 @@
 (function() {
   window.i18nLocales = window.i18nLocales || {};
   window.i18nLocales.en = {
-    "app.framing": "Honest Professional Framing: All pain ratings (1–10) reflect professional studio observations and reported client ranges. Discomfort is inherently subjective and influenced by fatigue, hydration, placement anatomy, and individual nervousness. Zero clinical statistics or simulated measurements.",
+    "app.framing": "Honest Professional Framing: The pain ratings (1–10) are an editorial scale based on studio experience, not measured data or client surveys. Discomfort is inherently subjective and influenced by fatigue, hydration, placement anatomy, and individual nervousness.",
     "app.language": "Language",
     "app.page_title": "Tattoo & Piercing Pain Level Guide | Poli International",
     "app.subtitle": "Comparative, honest discomfort expectations, anatomical factors, preparation protocols, and consultation guidance.",
