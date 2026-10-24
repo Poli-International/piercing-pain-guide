@@ -2,7 +2,7 @@
 // Studio-vetted terminology for French tattoo artists and body piercers
 window.i18nLocales = window.i18nLocales || {};
 window.i18nLocales.fr = {
-  "app.framing": "Cadre professionnel honnête : Toutes les évaluations de douleur (1–10) reflètent des observations professionnelles en studio et les plages rapportées par les clients. L'inconfort est par nature subjectif et influencé par la fatigue, l'hydratation, l'anatomie de l'emplacement et l'appréhension individuelle. Aucune statistique clinique ou mesure simulée.",
+  "app.framing": "Cadre professionnel honnête : les évaluations de douleur (1–10) sont une échelle éditoriale fondée sur l’expérience en studio, pas sur des mesures ni des enquêtes auprès des clients. L’inconfort est par nature subjectif et influencé par la fatigue, l’hydratation, l’anatomie de l’emplacement et l’appréhension individuelle.",
   "app.language": "Langue",
   "app.page_title": "Guide des niveaux de douleur des piercings et tatouages | Poli International",
   "app.subtitle": "Attentes comparatives et honnêtes sur l'inconfort, facteurs anatomiques, protocoles de préparation et conseils de consultation.",
